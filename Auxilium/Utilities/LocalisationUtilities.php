@@ -60,6 +60,7 @@ final class LocalisationUtilities
 
         // 2. account preference wins when logged in
         //  this is what makes the choice follow the user across devices.
+        /*
         if (SecurityUtilities::IsLoggedIn())
         {
             $dbLocale = self::Canonicalise(SecurityUtilities::GetLanguagePreference());
@@ -77,6 +78,7 @@ final class LocalisationUtilities
                 return self::$resolvedLocale;
             }
         }
+        */
 
         // 3. Cookie.
         //  Because we only ever write the cookie on an explicit choice (never from Accept-Language),
