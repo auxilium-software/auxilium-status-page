@@ -1,0 +1,43 @@
+{
+  "name": "auxilium-software/auxilium-status-page",
+  "description": "Status Page for an Auxilium|3 Server instance",
+  "type": "project",
+  "license": "Apache-2.0",
+  "version": "v3-dev",
+  "authors": [
+    {
+      "name": "Cerys Lewis",
+      "email": "cerys.lewis@aber.ac.uk",
+      "role": "Developer"
+    }
+  ],
+  "support": {
+    "email": "info@auxiliumsoftware.co.uk"
+  },
+  "require": {
+    "php": "^8.2",
+    "ext-curl": "*",
+    "ext-pdo": "*",
+    "phpunit/phpunit": "11.5.50",
+    "twig/twig": "^3.15.0",
+    "zircote/swagger-php": "~4.8.7"
+  },
+  "require-dev": {
+    "roave/security-advisories": "dev-latest",
+    "phpdocumentor/shim": "*"
+  },
+  "config": {
+    "allow-plugins": {
+      "endroid/installer": true,
+      "phpdocumentor/shim": true
+    }
+  },
+  "autoload": {
+    "psr-4": {
+      "Auxilium\\": "Auxilium/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit"
+  }
+}
