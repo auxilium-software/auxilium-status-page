@@ -1,0 +1,19 @@
+
+# Dev Files
+/.idea
+composer.phar
+vendor
+
+# Dev (Testing) Files
+.phpunit.result.cache
+
+# Dev (Documentation) Files
+.phpdoc
+.phpdoc-export
+phpunit.phar
+phpDocumentor.phar
+/Documentation
+
+# Dev (Misc) Files
+*.jar
+nohup.out
