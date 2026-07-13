@@ -1,0 +1,424 @@
+{% extends '/Bases/StandardWebPage.html.twig' %}
+{% block content %}
+
+    <nav class="topbar">
+        <div class="inner">
+            <span class="logo">Auxilium Status</span>
+            <span class="generated" id="generated"></span>
+        </div>
+    </nav>
+
+    <main class="inner">
+        <section class="aux-note is-operational" id="overall" role="status" aria-live="polite">
+            <span class="note-heading" id="overall-text">Loading status...</span>
+            <span class="note-sub" id="overall-sub"></span>
+        </section>
+
+        <section aria-labelledby="h-monitors">
+            <h2 id="h-monitors">Last 90 days</h2>
+            <div id="monitors"></div>
+            <div class="legend" aria-hidden="true">
+                <span><i class="up"></i>Operational</span>
+                <span><i class="degraded"></i>Degraded</span>
+                <span><i class="down"></i>Outage</span>
+                <span><i class="nodata"></i>No data</span>
+            </div>
+        </section>
+
+        <div class="cols">
+            <section class="left-preferential-box" aria-labelledby="h-incidents">
+                <h2 id="h-incidents">Past incidents</h2>
+                <div id="incidents"></div>
+            </section>
+
+            <section class="right-preferential-box" aria-labelledby="h-maint">
+                <h2 id="h-maint">Maintenance</h2>
+                <h3 class="muted" style="margin:0.6rem 0 0.5rem;">Scheduled</h3>
+                <div id="maint-upcoming"></div>
+                <h3 class="muted" style="margin:1.4rem 0 0.5rem;">Past</h3>
+                <div id="maint-historical"></div>
+            </section>
+        </div>
+
+        <footer class="page">
+            This page refreshes automatically every 60 seconds. Times shown in
+            <span id="tz-label">UTC</span>.
+        </footer>
+    </main>
+
+    <script>
+        "use strict";
+
+        const STATUS_URL = "/api/v1/get-status";
+        const WINDOW_DAYS = 90;
+        const REFRESH_MS = 60000;
+
+        let TZ = "UTC";
+
+        const STATUS_LABEL = {
+            up: "Operational",
+            degraded: "Degraded",
+            down: "Outage",
+            nodata: "No data"
+        };
+        const STATUS_BADGE = {
+            up: "positive",
+            degraded: "neutral",
+            down: "negative"
+        };
+        const OVERALL_TEXT = {
+            operational: "All systems operational",
+            degraded: "Degraded performance",
+            partial_outage: "Partial outage",
+            major_outage: "Major outage",
+            maintenance: "Maintenance in progress"
+        };
+
+        function createElement(tag, cls, text)
+        {
+            const e = document.createElement(tag);
+            if (cls)
+            {
+                e.className = cls;
+            }
+            if (text != null)
+            {
+                e.textContent = text;
+            }
+            return e;
+        }
+
+        function badge(kind, text)
+        {
+            return createElement("span", "badge " + kind, text);
+        }
+
+        function formatDateTime(iso)
+        {
+            try
+            {
+                return new Date(iso).toLocaleString(
+                    "en-GB",
+                    {
+                        timeZone: TZ,
+                        dateStyle: "medium",
+                        timeStyle: "short",
+                        timeZoneName: "short",
+                    }
+                );
+            }
+            catch (_)
+            {
+                return iso;
+            }
+        }
+
+        function FormatDate(iso)
+        {
+            try
+            {
+                return new Date(iso).toLocaleDateString(
+                    "en-GB",
+                    {
+                        timeZone: TZ,
+                        day: "numeric",
+                        month: "short",
+                        year: "numeric",
+                    }
+                );
+            }
+            catch (_)
+            {
+                return iso;
+            }
+        }
+
+        function dayKey(date)
+        {
+            // bit of a hack, en-CA returns dates as YYYY-MM-DD
+            return new Intl.DateTimeFormat(
+                "en-CA",
+                {
+                    timeZone: TZ,
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                }
+            ).format(date);
+        }
+
+        function durationText(aIso, bIso)
+        {
+            const ms = new Date(bIso) - new Date(aIso);
+            if (!(ms > 0))
+            {
+                return "";
+            }
+            const mins = Math.round(ms / 60000);
+            if (mins < 60)
+            {
+                return mins + " min";
+            }
+            const h = Math.floor(mins / 60), m = mins % 60;
+            return m ? `${h} h ${m} min` : `${h} h`;
+        }
+
+        function buildAxis()
+        {
+            const out = [], now = Date.now();
+            for (let i = WINDOW_DAYS - 1; i >= 0; i--)
+            {
+                out.push(dayKey(new Date(now - i * 86400000)));
+            }
+            return out;
+        }
+
+        function monitorName(data, key)
+        {
+            return data.monitors?.[key]?.prettyName || key;
+        }
+
+        function computeOverall(data)
+        {
+            const now = Date.now();
+            const maint = (data.maintenance?.upcoming || []).concat(data.maintenance?.historical || []);
+            const activeMaint = maint.some(
+                m =>
+                    m.status === "in_progress"
+                    || (
+                        new Date(m.startsAt) <= now
+                        && now <= new Date(m.endsAt)
+                    )
+            );
+
+            let down = 0, degraded = 0;
+            for (const mon of Object.values(data.monitors || {}))
+            {
+                if (mon.currentStatus === "down")
+                {
+                    down++;
+                }
+                else if (mon.currentStatus === "degraded")
+                {
+                    degraded++;
+                }
+            }
+
+
+            if (down > 1)
+            {
+                return "major_outage";
+            }
+            else if (down === 1)
+            {
+                return "partial_outage";
+            }
+            else if (degraded)
+            {
+                return "degraded";
+            }
+            else if (activeMaint)
+            {
+                return "maintenance";
+            }
+            return "operational";
+        }
+
+        function renderOverall(data)
+        {
+            const key = computeOverall(data);
+            document.getElementById("overall").className = "aux-note is-" + key;
+            document.getElementById("overall-text").textContent = OVERALL_TEXT[key];
+            document.getElementById("overall-sub").textContent = "Updated " + formatDateTime(data.generatedAt || new Date().toISOString());
+        }
+
+        function renderMonitors(data)
+        {
+            const axis = buildAxis();
+            const host = document.getElementById("monitors");
+            host.textContent = "";
+
+            for (const [key, mon] of Object.entries(data.monitors || {}))
+            {
+                const byDay = new Map((mon.days || []).map(d => [d.date, d]));
+
+                const box = createElement("div", "aux-box");
+                const head = createElement("h4", "aux-box-head");
+                head.appendChild(document.createTextNode(mon.prettyName || key));
+                head.appendChild(createElement("span", "spacer"));
+                head.appendChild(badge(STATUS_BADGE[mon.currentStatus] || "neutral", STATUS_LABEL[mon.currentStatus] || mon.currentStatus));
+                box.appendChild(head);
+
+                const body = createElement("div", "aux-box-body");
+                if (mon.uptime90d != null)
+                {
+                    body.appendChild(createElement("div", "uptime", mon.uptime90d.toFixed(2) + "% uptime over 90 days"));
+                }
+
+                const bar = createElement("div", "daybar");
+                bar.setAttribute("role", "img");
+                bar.setAttribute(
+                    "aria-label",
+                    `${mon.prettyName || key}: ${mon.uptime90d != null ? mon.uptime90d.toFixed(2) + "% uptime over " : ""}the last ${WINDOW_DAYS} days`
+                );
+                for (const date of axis)
+                {
+                    const d = byDay.get(date);
+                    const status = d ? d.status : "nodata";
+                    const cell = createElement("div", "day day--" + status);
+                    cell.tabIndex = 0;
+                    const uptimeTxt = d && d.uptime != null ? ` - ${d.uptime}% uptime` : "";
+                    cell.title = `${FormatDate(date)}: ${STATUS_LABEL[status]}${uptimeTxt}`;
+                    cell.setAttribute("aria-label", cell.title);
+                    bar.appendChild(cell);
+                }
+                body.appendChild(bar);
+
+                const ax = createElement("div", "axis");
+                ax.appendChild(createElement("span", null, `${WINDOW_DAYS} days ago`));
+                ax.appendChild(createElement("span", null, "Today"));
+                body.appendChild(ax);
+
+                box.appendChild(body);
+                host.appendChild(box);
+            }
+        }
+
+        function renderIncidents(data)
+        {
+            const host = document.getElementById("incidents");
+            host.textContent = "";
+            const incidents = data.incidents || [];
+            if (!incidents.length)
+            {
+                host.appendChild(createElement("p", "empty", "No incidents reported in the last 90 days."));
+                return;
+            }
+            for (const inc of incidents)
+            {
+                const sev = (inc.impact === "major" || inc.impact === "critical") ? "is-major" : inc.impact === "minor" ? "is-minor" : "is-info";
+                const box = createElement("div", "aux-box " + sev);
+
+                const head = createElement("h4", "aux-box-head");
+                head.appendChild(document.createTextNode(inc.title));
+                head.appendChild(createElement("span", "spacer"));
+                head.appendChild(badge(inc.status === "resolved" ? "positive" : "neutral", inc.status));
+                box.appendChild(head);
+
+                const body = createElement("div", "aux-box-body");
+
+                let when = (inc.impact ? inc.impact[0].toUpperCase() + inc.impact.slice(1) + " impact · " : "") + "started " + formatDateTime(inc.startedAt);
+                if (inc.resolvedAt)
+                {
+                    when += " · resolved " + formatDateTime(inc.resolvedAt);
+                    const dur = durationText(inc.startedAt, inc.resolvedAt);
+                    if (dur)
+                    {
+                        when += ` · ${dur}`;
+                    }
+                }
+                else
+                {
+                    when += " · ongoing";
+                }
+                body.appendChild(createElement("div", "when", when));
+
+                const affected = (inc.affected || []).map(k => monitorName(data, k));
+                if (affected.length)
+                {
+                    body.appendChild(createElement("div", "affected", "Affected: " + affected.join(", ")));
+                }
+
+                const tl = createElement("ul", "timeline");
+                for (const u of (inc.updates || []))
+                {
+                    const li = createElement("li");
+                    const line = createElement("div");
+                    line.appendChild(createElement("span", "tl-time", formatDateTime(u.postedAt)));
+                    line.appendChild(createElement("span", "tl-title", u.status));
+                    li.appendChild(line);
+                    li.appendChild(createElement("p", "tl-desc", u.body));
+                    tl.appendChild(li);
+                }
+                body.appendChild(tl);
+                box.appendChild(body);
+                host.appendChild(box);
+            }
+        }
+
+        function renderMaintenanceList(items, hostId, upcoming, data)
+        {
+            const host = document.getElementById(hostId);
+            host.textContent = "";
+            if (!items || !items.length)
+            {
+                host.appendChild(createElement("p", "empty", upcoming ? "No maintenance scheduled." : "No past maintenance to show."));
+                return;
+            }
+            for (const m of items)
+            {
+                const box = createElement("div", "aux-box is-info");
+                const head = createElement("h4", "aux-box-head");
+                head.appendChild(document.createTextNode(m.title));
+                head.appendChild(createElement("span", "spacer"));
+                head.appendChild(badge(m.status === "completed" ? "positive" : "neutral", m.status.replace("_", " ")));
+                box.appendChild(head);
+
+                const body = createElement("div", "aux-box-body");
+                body.appendChild(createElement("div", "when", `${formatDateTime(m.startsAt)} -> ${formatDateTime(m.endsAt)} (${durationText(m.startsAt, m.endsAt)})`));
+                const affected = (m.affected || []).map(k => monitorName(data, k));
+                if (affected.length)
+                {
+                    body.appendChild(createElement("div", "affected", "Affects: " + affected.join(", ")));
+                }
+                if (m.body)
+                {
+                    body.appendChild(createElement("p", "body-text", m.body));
+                }
+
+                box.appendChild(body);
+                host.appendChild(box);
+            }
+        }
+
+        function render(data)
+        {
+            window.__statusData = data;
+            TZ = data.timezone || TZ;
+            document.getElementById("tz-label").textContent = TZ;
+            document.getElementById("generated").textContent = "Updated " + formatDateTime(data.generatedAt || new Date().toISOString());
+            renderOverall(data);
+            renderMonitors(data);
+            renderIncidents(data);
+            renderMaintenanceList(data.maintenance?.upcoming, "maint-upcoming", true, data);
+            renderMaintenanceList(data.maintenance?.historical, "maint-historical", false, data);
+        }
+
+        function renderLoadFailure()
+        {
+            document.getElementById("overall").className = "aux-note is-degraded";
+            document.getElementById("overall-text").textContent = "Unable to load status";
+            document.getElementById("overall-sub").textContent = "Retrying shortly...";
+        }
+
+        async function load()
+        {
+            try
+            {
+                const res = await fetch(STATUS_URL, {cache: "no-store"});
+                if (!res.ok)
+                {
+                    throw new Error("HTTP " + res.status);
+                }
+                render(await res.json());
+            }
+            catch (err)
+            {
+                renderLoadFailure();
+            }
+        }
+
+        load();
+        setInterval(load, REFRESH_MS);
+    </script>
+{% endblock %}
