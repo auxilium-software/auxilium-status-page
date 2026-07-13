@@ -2,15 +2,9 @@
 
 namespace Auxilium\TwigHandling;
 
-use Auxilium\Enumerators\SessionKey;
-use Auxilium\Exceptions\ApiException;
-use Auxilium\ServiceInteractions\APIInteractions;
 use Auxilium\TwigHandling\Extensions\CommonFilters;
 use Auxilium\TwigHandling\Extensions\CommonFunctions;
 use Auxilium\Utilities\LocalisationUtilities;
-use Auxilium\Utilities\SecurityUtilities;
-use Auxilium\Utilities\SessionUtilities;
-use Auxilium\Utilities\SystemSettingsUtilities;
 use JetBrains\PhpStorm\NoReturn;
 use Throwable;
 use Twig\Environment;
@@ -116,23 +110,6 @@ final class PageBuilder
     public static function RenderInternalSystemError(Throwable $ex): void
     {
         http_response_code(500);
-
-        if ($ex instanceof ApiException) {
-            $technicalDetails = sprintf(
-                "Exception Type:\n    %s\nMessage:\n    %s\nURI:\n    %s%s",
-                get_class($ex),
-                $ex->getMessage(),
-                $_SERVER['HTTP_HOST'],
-                $_SERVER['REQUEST_URI']
-            );
-
-            self::Render(
-                template: '/ErrorPages/InternalSystemErrorErrorPage.html.twig',
-                variables: ['technical_details' => $technicalDetails],
-                useAuth: false
-            );
-        }
-
         throw $ex;
     }
 
