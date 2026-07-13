@@ -1,0 +1,505 @@
+
+:root {
+    --brand: #152133;
+    --brand-contrast: #ffffff;
+    --brand-alt: #090e17;
+    --brand-alt-contrast: #ffffff;
+    --highlight: #e08910;
+
+    --bg: #ffffff;
+    --fg: #000000;
+    --fg-outline: #000000;
+    --muted: #5a5a5a;
+
+    --positive: #336600;
+    --positive-contrast: #ffffff;
+    --neutral: #ffaa00;
+    --neutral-contrast: #000000;
+    --negative: #cc2200;
+    --negative-contrast: #ffffff;
+    --information: #007adc;
+    --information-contrast: #000000;
+    --nodata: #cfcfcf;
+
+    --outline-width: 0.2rem;
+    --padding-level-one: 5mm;
+
+    font-size: 5mm;
+    font-family: "Atkinson Hyperlegible", "Helvetica", "Arial", sans-serif;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: var(--bg);
+    color: var(--fg);
+    font-size: 1rem;
+    line-height: 1.4;
+}
+
+a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: max(1px, 0.08em);
+    cursor: pointer;
+}
+
+a:hover, a:focus, :focus-visible {
+    outline: var(--outline-width) solid var(--highlight);
+    outline-offset: 0;
+}
+
+h2 {
+    font-size: 1.6rem;
+    margin: 2.2rem 0 0.8rem;
+}
+
+h3 {
+    font-size: 1.2rem;
+}
+
+.muted {
+    color: var(--muted);
+}
+
+.inner {
+    max-width: 320mm;
+    margin: 0 auto;
+    padding: 0 var(--padding-level-one);
+}
+
+/* ---- two-column layout (Auxilium .left/.right-preferential-box) ---- */
+.cols {
+    overflow: visible;
+}
+
+.cols::after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+.left-preferential-box, .right-preferential-box {
+    padding: 0;
+    overflow: visible;
+}
+
+@media only screen and (min-width: 300mm) {
+    .left-preferential-box {
+        width: 50%;
+        padding-right: 1rem;
+        float: left;
+    }
+
+    .right-preferential-box {
+        width: 50%;
+        padding-left: 1rem;
+        float: right;
+    }
+
+    /* align the tops of both columns by killing the first heading's margin */
+    .left-preferential-box > :first-child, .right-preferential-box > :first-child {
+        margin-top: 0;
+    }
+}
+
+/* ---- nav (Auxilium nav: brand bar, 4rem, bold logo) ---- */
+nav.topbar {
+    background: var(--brand);
+    color: var(--brand-contrast);
+    height: 4rem;
+    display: flex;
+    align-items: center;
+}
+
+nav.topbar .inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+}
+
+.logo .status-tag {
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 1rem;
+    padding: 0.1em 0.8em;
+    margin-left: 0.6rem;
+    background: var(--highlight);
+    color: #000000;
+}
+
+.generated {
+    font-size: 0.8rem;
+    opacity: 0.85;
+}
+
+main {
+    padding-bottom: 4rem;
+}
+
+/* ---- overall banner: .note motif ---- */
+.aux-note {
+    position: relative;
+    overflow: hidden;
+    border: var(--outline-width) solid;
+    padding: 1.4rem 1.2rem 1.2rem;
+    margin: 1.6rem 0;
+}
+
+.note-heading {
+    font-size: 2rem;
+    font-weight: bold;
+    display: block;
+    line-height: 1.1;
+}
+
+.note-sub {
+    display: block;
+    font-size: 0.85rem;
+    margin-top: 0.35rem;
+    opacity: 0.9;
+}
+
+.aux-note.is-operational {
+    background: var(--positive);
+    color: var(--positive-contrast);
+    border-color: var(--positive);
+}
+
+.aux-note.is-degraded {
+    background: var(--neutral);
+    color: var(--neutral-contrast);
+    border-color: var(--neutral);
+}
+
+.aux-note.is-maintenance {
+    background: var(--brand-alt);
+    color: var(--brand-alt-contrast);
+    border-color: var(--brand-alt);
+}
+
+.aux-note.is-partial_outage, .aux-note.is-major_outage {
+    background: var(--negative);
+    color: var(--negative-contrast);
+    border-color: var(--negative);
+    padding-top: 2rem;
+}
+
+/* crosshatch top stripe for an outage, echoing .critical-note::before */
+.aux-note.is-partial_outage::before, .aux-note.is-major_outage::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1.25rem;
+    background-image: repeating-linear-gradient(135deg, rgba(255, 255, 255, .92) 0 2px, transparent 2px 9px);
+}
+
+/* ---- the Auxilium bordered box with a filled header bar ---- */
+.aux-box {
+    border: var(--outline-width) solid var(--fg-outline);
+    padding: 0;
+    margin: 0 0 1rem;
+    overflow: visible;
+    background: var(--bg);
+}
+
+.aux-box-head {
+    background: var(--fg);
+    color: var(--bg);
+    font-weight: bold;
+    font-size: 1rem;
+    padding: 0.3em 0.7em 0.4em;
+    margin: -2px -2px 0 -2px;
+    border: 2px solid var(--fg);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.aux-box-head .spacer {
+    flex: 1 1 auto;
+}
+
+.aux-box-body {
+    padding: 0.55em 0.7em 0.7em;
+}
+
+.aux-box.is-major {
+    border-color: var(--negative);
+}
+
+.aux-box.is-major > .aux-box-head {
+    background: var(--negative);
+    border-color: var(--negative);
+    color: var(--negative-contrast);
+}
+
+.aux-box.is-minor {
+    border-color: var(--neutral);
+}
+
+.aux-box.is-minor > .aux-box-head {
+    background: var(--neutral);
+    border-color: var(--neutral);
+    color: var(--neutral-contrast);
+}
+
+.aux-box.is-info {
+    border-color: var(--brand);
+}
+
+.aux-box.is-info > .aux-box-head {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: var(--brand-contrast);
+}
+
+/* ---- badge pills (.tag-badge family) ---- */
+.badge {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: bold;
+    border-radius: 1rem;
+    padding: 0.2em 0.9em;
+    background: var(--brand);
+    color: var(--brand-contrast);
+    vertical-align: middle;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+.badge.positive {
+    background: var(--positive);
+    color: var(--positive-contrast);
+}
+
+.badge.neutral {
+    background: var(--neutral);
+    color: var(--neutral-contrast);
+}
+
+.badge.negative {
+    background: var(--negative);
+    color: var(--negative-contrast);
+}
+
+/* ---- monitors / 90-day bar ---- */
+.uptime {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin: 0 0 0.5rem;
+}
+
+.daybar {
+    display: flex;
+    gap: 2px;
+    height: 2.2rem;
+    align-items: stretch;
+}
+
+.day {
+    flex: 1 1 0;
+    min-width: 2px;
+}
+
+.day--up {
+    background: var(--positive);
+}
+
+.day--degraded {
+    background: var(--neutral);
+}
+
+.day--down {
+    background: var(--negative);
+}
+
+.day--nodata {
+    background: var(--nodata);
+}
+
+.day:hover, .day:focus {
+    outline: var(--outline-width) solid var(--highlight);
+    outline-offset: 1px;
+    position: relative;
+    z-index: 2;
+}
+
+.axis {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 0.35rem;
+}
+
+.legend {
+    display: flex;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-top: 0.8rem;
+}
+
+.legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.legend i {
+    width: 0.85rem;
+    height: 0.85rem;
+    display: inline-block;
+}
+
+.legend .up {
+    background: var(--positive);
+}
+
+.legend .degraded {
+    background: var(--neutral);
+}
+
+.legend .down {
+    background: var(--negative);
+}
+
+.legend .nodata {
+    background: var(--nodata);
+}
+
+/* ---- incident / maintenance meta ---- */
+.when {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin: 0 0 0.2rem;
+}
+
+.affected {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+}
+
+.body-text {
+    font-size: 0.92rem;
+    margin: 0.4rem 0 0;
+}
+
+/* ---- update thread (.timeline-entry motif: thread + hollow square node) ---- */
+.timeline {
+    list-style: none;
+    margin: 0.6rem 0 0;
+    padding: 0;
+}
+
+.timeline li {
+    position: relative;
+    padding: 0 0 0.7rem 1.5rem;
+    line-height: 1.35;
+}
+
+.timeline li::before {
+    content: "";
+    position: absolute;
+    left: 0.32rem;
+    top: 0.15rem;
+    bottom: 0;
+    width: 0.15rem;
+    background: var(--fg);
+}
+
+.timeline li:last-child::before {
+    bottom: auto;
+    height: 0.7rem;
+}
+
+.timeline li::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.18rem;
+    width: 0.8rem;
+    height: 0.8rem;
+    box-sizing: border-box;
+    background: var(--bg);
+    border: var(--outline-width) solid var(--fg);
+}
+
+.tl-time {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: var(--brand);
+    margin-right: 0.5rem;
+    white-space: nowrap;
+}
+
+.tl-title {
+    font-weight: bold;
+    text-transform: capitalize;
+}
+
+.tl-desc {
+    margin: 0.15rem 0 0;
+    font-size: 0.9rem;
+}
+
+.empty {
+    color: var(--muted);
+    font-style: italic;
+}
+
+.notice {
+    display: none;
+    border: var(--outline-width) solid var(--neutral);
+    background: var(--bg);
+    color: var(--fg);
+    padding: 0.6rem 1rem;
+    margin: 0 0 1.5rem;
+    font-size: 0.85rem;
+}
+
+.notice.show {
+    display: block;
+}
+
+.notice code {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+}
+
+footer.page {
+    border-top: var(--outline-width) solid var(--fg);
+    margin-top: 2.5rem;
+    padding-top: 1rem;
+    font-size: 0.8rem;
+    color: var(--muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
+    }
+}
