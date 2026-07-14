@@ -1,0 +1,73 @@
+
+@keyframes loading-placeholder {
+    0% {
+        background-position: 400% 0%;
+    }
+    100% {
+        background-position: 0% 0%;
+    }
+}
+.loading-placeholder {
+    color: transparent;
+    opacity: 50%;
+    user-select: none;
+    background: linear-gradient(-45deg, #444444 0%, #444444 25%, #bbbbbb 50%, #444444 75%, #444444 100%);
+    background-size: 400% 400%;
+    animation: loading-placeholder 3s linear infinite;
+}
+
+@keyframes loading-icon-part-a {
+    0% {
+        transform: translate(-0.3em, 0);
+    }
+    50% {
+        transform: translate(0.3em, 0);
+    }
+    100% {
+        transform: translate(-0.3em, 0);
+    }
+}
+@keyframes loading-icon-part-b {
+    0% {
+        transform: translate(0.3em, 0);
+    }
+    50% {
+        transform: translate(-0.3em, 0);
+    }
+    100% {
+        transform: translate(0.3em, 0);
+    }
+}
+.loading-icon {
+    display: inline-block;
+    position: relative;
+    width: 1em;
+    height: 1em;
+    margin-bottom: 0.1em;
+    margin-left: 0.2em;
+    vertical-align: text-bottom;
+}
+.loading-icon::after {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    background-color: var(--foreground-color-headings);
+    border-radius: 1em;
+    width: 20%;
+    height: 20%;
+    top: 40%;
+    left: 40%;
+    animation: loading-icon-part-a 1.5s ease-in-out 0s infinite;
+}
+.loading-icon::before {
+    content: "";
+    display: inline-block;
+    position: absolute;
+    background-color: var(--foreground-color-headings);
+    border-radius: 1em;
+    width: 20%;
+    height: 20%;
+    top: 40%;
+    left: 40%;
+    animation: loading-icon-part-b 1.5s ease-in-out 0s infinite;
+}

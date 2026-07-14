@@ -1,0 +1,54 @@
+
+
+.tag-badge, .tag-badge-inline, .tag-badge-inline-large {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 1.75rem;
+    margin-left: 0.5rem;
+    font-size: 1rem;
+    font-weight: bold;
+    border-radius: 1rem;
+    padding: 0.2em 0.9em 0.2em 0.9em;
+    background-color: var(--brand-color);
+    color: var(--brand-color-contrast);
+}
+.tag-badge-inline {
+    font-size: 0.55em;
+    margin: 0.3em 0.5em 0 0;
+    border-radius: 1em;
+    vertical-align: top;
+}
+.tag-badge-inline-large {
+    font-size: 1em;
+    margin: 0.3em 0.5em 0 0;
+    border-radius: 1em;
+    vertical-align: baseline;
+}
+.tag-badge-small {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 1.4rem;
+    margin-left: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+    border-radius: 1rem;
+    padding: 0.2em 0.9em 0.2em 0.9em;
+    background-color: var(--brand-color);
+    color: var(--brand-color-contrast);
+}
+.tag-badge-alternate-margins {
+    margin: 0 1rem 0 0;
+}
+
+.case-closed-badge, .negative-badge {
+    background-color: var(--negative-badge-color) !important;
+    color: var(--negative-badge-color-contrast) !important;
+}
+.case-open-badge, .positive-badge {
+    background-color: var(--positive-badge-color) !important;
+    color: var(--positive-badge-color-contrast) !important;
+}
+.case-staging-badge, .neutral-badge {
+    background-color: var(--neutral-badge-color) !important;
+    color: var(--neutral-badge-color-contrast) !important;
+}

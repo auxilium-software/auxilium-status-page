@@ -1,0 +1,37 @@
+
+.link-list {
+    list-style-type: none;
+    padding: 0 0 0 0;
+    column-count: 5;
+    column-rule-width: 0.2rem;
+    column-rule-style: solid;
+    column-gap: 2rem;
+    column-fill: balance;
+    column-rule-color: currentcolor;
+}
+.link-list > li {
+    margin: 0 0 0.5em 0;
+    display: inline-block;
+    width: 100%;
+    break-inside: avoid;
+}
+@media only screen and (max-width: 460mm) {
+    .link-list {
+        column-count: 3;
+    }
+}
+@media only screen and (max-width: 240mm) {
+    .link-list > li {
+        margin: 0 0 1em 0;
+    }
+}
+@media only screen and (max-width: 180mm) {
+    .link-list {
+        column-count: 2;
+    }
+}
+@media only screen and (max-width: 128mm) {
+    .link-list {
+        column-count: 1;
+    }
+}

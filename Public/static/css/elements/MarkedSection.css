@@ -1,0 +1,51 @@
+
+
+.marked-section {
+    padding: 0.1rem 0 0.1rem 1rem;
+    margin: 0 0 2.2rem 0;
+    border-width: var(--outline-width);
+    border-style: none none none solid;
+    border-color: var(--foreground-color);
+    overflow: visible;
+}
+@media only screen and (max-width: 180mm) {
+    .marked-section {
+        padding: 0.1rem 0 0.1rem 0.6rem;
+        margin: 0 0 2.2rem -0.5rem;
+        width: 100%;
+        box-sizing: content-box;
+        border-width: 0.15rem;
+        border-style: none none none solid;
+        border-color: var(--foreground-color);
+        overflow: visible;
+    }
+}
+/*
+.right-preferential-box > .marked-section {
+    padding: 0 1rem 0 0;
+    border-style: none solid none none;
+}
+*/
+.marked-section > *:first-child, .marked-section > a:first-child > * {
+    margin-top: 0;
+    margin-bottom: 0.5em;
+}
+.marked-section > h2:first-child, .marked-section > h3:first-child, .marked-section > a:first-child > h2, .marked-section > a:first-child > h3 {
+    margin-top: -0.3em;
+    display: inline-block;
+}
+.marked-section > *:last-child {
+    margin-bottom: 0;
+}
+.marked-section > .button-box:last-child {
+    margin: 0 -1rem -1rem 0;
+    padding: 0 0 0 0;
+}
+
+.marked-section > .heading-of-hideable-content {
+    margin-bottom: -0.3em;
+}
+
+.marked-section > .heading-of-hideable-content + div {
+    margin-top: 1.5rem;
+}

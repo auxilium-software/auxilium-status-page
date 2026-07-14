@@ -1,0 +1,17 @@
+.video-top-level-container {
+    background-color: #000000;
+}
+
+.video-top-level-container > div {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+}
+
+.video-js {
+    margin: auto;
+    max-width: 100%;
+}
+
+.vjs-control-bar {
+    padding: 0;
+}

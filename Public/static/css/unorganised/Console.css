@@ -1,0 +1,128 @@
+@font-face {
+    font-family: "IBM Plex Mono";
+    font-display: swap;
+    src: url("/Static/Fonts/IBMPlexMono-Regular.ttf") format('truetype');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: "IBM Plex Mono";
+    font-display: swap;
+    src: url("/Static/Fonts/IBMPlexMono-Bold.ttf") format('truetype');
+    font-weight: bold;
+}
+
+
+#js_console {
+    background-color: #000000;
+    color: #ffffff;
+    font-family: "IBM Plex Mono";
+    padding: 1rem;
+}
+
+#js_console > #js_console_scrollable_container > .loading-placeholder {
+    margin-top: 0.5rem;
+    height: 2rem;
+}
+
+.js-console-segment-container {
+    padding: 0;
+    display: inline-block;
+    margin: 0;
+    position: relative;
+}
+
+.js-console-user-input-record {
+    color: #33ff00;
+}
+
+
+.js-console-error-record {
+    color: #ff3311;
+    font-weight: bold;
+}
+
+.js-console-table, .js-console-table > tr > td, .js-console-table > tr > th {
+    border: 0.1em solid #ffffff;
+    border-collapse: collapse;
+    padding: 0.45em;
+    text-align: left;
+}
+
+.js-console-table {
+    margin: 0.45em;
+}
+
+.js-console-table-container {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    width: 100%;
+    position: relative;
+    display: inline-block;
+}
+
+#js_console > span, #js_console > #js_console_scrollable_container > span, .js-console-segment-container > span, .js-console-segment-container > a {
+    font-family: "IBM Plex Mono";
+    padding: 0;
+    font-size: 1rem;
+    display: inline-block;
+    vertical-align: middle;
+    position: relative;
+    width: 100%;
+    outline: none;
+    margin: 0;
+    line-height: 1em;
+    word-wrap: break-word;
+}
+
+#js_console > #js_console_input {
+    background-color: transparent;
+    color: inherit;
+    width: 100%;
+    position: absolute;
+    vertical-align: middle;
+    bottom: 1rem;
+    left: 0;
+    margin: 0;
+    font-size: 1rem;
+    padding: 0 1rem 0 2rem;
+    overflow: visible;
+    border: none;
+    outline: none;
+    height: 1.25em;
+    font-family: "IBM Plex Mono";
+}
+
+#js_console > #js_console_input_caret {
+    width: 2rem;
+    position: absolute;
+    bottom: 1rem;
+    left: 0;
+    margin: 0;
+    font-size: 1rem;
+    padding: 0 1rem 0 1rem;
+    height: 1.25em;
+    font-family: "IBM Plex Mono";
+}
+
+#js_console > #js_console_scrollable_container {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    position: absolute;
+    top: 0;
+    bottom: 3.25rem;
+    left: 0rem;
+    right: 0rem;
+    padding: 1rem;
+    
+}
+
+#js_console > #js_console_input_prompt {
+    position: absolute;
+    bottom: 2.25em;
+    left: 0;
+    margin: 0;
+    font-size: 1rem;
+    padding: 0 1rem 0 1rem;
+    color: #33ff00;
+}
