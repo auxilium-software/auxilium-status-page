@@ -1,0 +1,337 @@
+/* ===========================================================================
+   Auxilium | 3 Status — /Static/CSS/Elements/Status.CSS
+
+   ADDITIVE layer over the portal's design system. Import this AFTER the portal
+   CSS. It defines only the components the portal doesn't have, and reuses the
+   portal's tokens and classes for everything else.
+
+   Deliberately NOT redefined here (use the portal's):
+     .tag-badge / .tag-badge-inline / .positive-badge / .neutral-badge /
+     .negative-badge  ...... all status pills
+     .timeline-list / .timeline-entry ..... the incident update thread
+     .marked-section, .critical-note, .warning-note, .info-note
+     .left-preferential-box / .right-preferential-box ..... two-column layout
+     .error-toast, .no-data-badge, .collection-list, dl/dt/dd, .button-box
+     all form, input, fieldset and navigation styling
+
+   No new custom properties are introduced: everything below is expressed in
+   Core.CSS tokens so a brand-colour override propagates automatically.
+   =========================================================================== */
+
+
+/* ---------------------------------------------------------------------------
+   1. STATUS BOX
+   Generalises the .email-box / .todo-box motif: a bordered box with a solid
+   filled header bar. The portal's versions are semantically tied to emails and
+   to-dos; this is the same visual pattern with swappable severity colouring.
+
+   The -2px margins on the header are load-bearing — they pull the bar out over
+   the parent's border so it bleeds edge to edge (and are why the parent must
+   keep overflow: visible in WebKit).
+   --------------------------------------------------------------------------- */
+.status-box {
+    border: var(--outline-width) solid var(--foreground-color);
+    padding: 0;
+    margin: 0 0 1rem 0;
+    overflow: visible; /* necessary for WebKit based browsers */
+}
+
+.status-box > .status-box-header {
+    background-color: var(--foreground-color);
+    color: var(--background-color);
+    font-weight: bold;
+    padding: 0.3em 0.7em 0.4em 0.7em;
+    margin: -2px -2px 0 -2px; /* necessary for WebKit based browsers */
+    border: 2px solid var(--foreground-color);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+/* pushes the trailing badge to the right edge of the header bar */
+.status-box > .status-box-header > .status-box-header-spacer {
+    flex: 1 1 auto;
+}
+
+/* badges sit on the filled bar, so they need no vertical margin of their own */
+.status-box > .status-box-header > .tag-badge,
+.status-box > .status-box-header > .tag-badge-small {
+    margin-top: 0;
+    margin-left: 0;
+}
+
+.status-box > .status-box-body {
+    padding: 0.55em 0.7em 0.7em 0.7em;
+}
+
+.status-box > .status-box-body > :first-child {
+    margin-top: 0;
+}
+
+.status-box > .status-box-body > :last-child {
+    margin-bottom: 0;
+}
+
+/* --- severity variants: recolour the border and the header bar together --- */
+.status-box-positive {
+    border-color: var(--positive-badge-color);
+}
+.status-box-positive > .status-box-header {
+    background-color: var(--positive-badge-color);
+    border-color: var(--positive-badge-color);
+    color: var(--positive-badge-color-contrast);
+}
+
+.status-box-neutral {
+    border-color: var(--neutral-badge-color);
+}
+.status-box-neutral > .status-box-header {
+    background-color: var(--neutral-badge-color);
+    border-color: var(--neutral-badge-color);
+    color: var(--neutral-badge-color-contrast);
+}
+
+.status-box-negative {
+    border-color: var(--negative-badge-color);
+}
+.status-box-negative > .status-box-header {
+    background-color: var(--negative-badge-color);
+    border-color: var(--negative-badge-color);
+    color: var(--negative-badge-color-contrast);
+}
+
+.status-box-brand {
+    border-color: var(--brand-color);
+}
+.status-box-brand > .status-box-header {
+    background-color: var(--brand-color);
+    border-color: var(--brand-color);
+    color: var(--brand-color-contrast);
+}
+
+
+/* ---------------------------------------------------------------------------
+   2. OVERALL STATUS BANNER
+   The single "are we up?" headline. Built on the portal's note pattern
+   (.critical-note et al) but as its own class, since the severity mapping is
+   status-specific and it needs to sit flush at the top of the page.
+   --------------------------------------------------------------------------- */
+.overall-status-note {
+    position: relative;
+    overflow: hidden;
+    border: var(--outline-width) solid;
+    padding: 1.4rem 1rem 1.2rem 1rem;
+    margin: 1rem 0 2rem 0;
+}
+
+.overall-status-note > .note-heading {
+    font-size: 2rem;
+    font-weight: bold;
+    display: block;
+    line-height: 1.1;
+}
+
+.overall-status-note > .overall-status-subheading {
+    display: block;
+    font-size: 0.85rem;
+    margin-top: 0.35rem;
+    opacity: 0.9;
+}
+
+.overall-status-operational {
+    background-color: var(--positive-badge-color);
+    color: var(--positive-badge-color-contrast);
+    border-color: var(--positive-badge-color);
+}
+
+.overall-status-degraded {
+    background-color: var(--neutral-badge-color);
+    color: var(--neutral-badge-color-contrast);
+    border-color: var(--neutral-badge-color);
+}
+
+.overall-status-maintenance {
+    background-color: var(--brand-color-alternate);
+    color: var(--brand-color-alternate-contrast);
+    border-color: var(--brand-color-alternate);
+}
+
+.overall-status-partial-outage,
+.overall-status-major-outage {
+    background-color: var(--error-color);
+    color: var(--error-color-contrast);
+    border-color: var(--error-color);
+    padding-top: 2rem; /* clears the hatched stripe below */
+}
+
+/* The crosshatch stripe from .critical-note — the strongest visual alarm in the
+   design system, reserved for an actual outage. Same asset as the portal uses. */
+.overall-status-partial-outage::before,
+.overall-status-major-outage::before {
+    content: "";
+    display: block;
+    position: absolute;
+    background-image: url("/Static/Images/Backgrounds/CrossHatch-White.svg");
+    background-repeat: repeat no-repeat;
+    background-size: auto 100%;
+    background-position: left top;
+    width: 100%;
+    height: 1.25rem;
+    top: 0;
+    left: 0;
+}
+
+
+/* ---------------------------------------------------------------------------
+   3. NINETY-DAY UPTIME BAR
+   One flex cell per day. Cells flex so the bar always fills its container
+   regardless of how many days are shown; min-width stops them vanishing on
+   narrow screens (they get thin, and the bar stays readable as a whole).
+   --------------------------------------------------------------------------- */
+.uptime-summary {
+    font-size: 0.8rem;
+    margin: 0 0 0.5rem 0;
+}
+
+.uptime-bar {
+    display: flex;
+    gap: 2px;
+    height: 2.2rem;
+    align-items: stretch;
+    padding: 0;
+    overflow: visible;
+}
+
+.uptime-bar > .uptime-day {
+    flex: 1 1 0;
+    min-width: 2px;
+    padding: 0;
+    /* no border-radius: the portal's visual language is hard-edged throughout */
+}
+
+.uptime-day-up {
+    background-color: var(--positive-badge-color);
+}
+
+.uptime-day-degraded {
+    background-color: var(--neutral-badge-color);
+}
+
+.uptime-day-down {
+    background-color: var(--negative-badge-color);
+}
+
+.uptime-day-nodata {
+    background-color: var(--foreground-color-outlines);
+    opacity: 0.2;
+}
+
+/* keyboard-reachable, so the per-day tooltip isn't mouse-only */
+.uptime-bar > .uptime-day:hover,
+.uptime-bar > .uptime-day:focus {
+    outline: var(--outline-width) solid var(--brand-color-ui-highlight);
+    outline-offset: 1px;
+    position: relative;
+    z-index: 32;
+}
+
+.uptime-axis {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    margin-top: 0.35rem;
+    padding: 0;
+    opacity: 0.7;
+}
+
+.uptime-legend {
+    display: flex;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+    font-size: 0.78rem;
+    margin: 0.8rem 0 2rem 0;
+    padding: 0;
+    opacity: 0.7;
+}
+
+.uptime-legend > span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.uptime-legend > span > .uptime-legend-swatch {
+    width: 0.85rem;
+    height: 0.85rem;
+    display: inline-block;
+}
+
+
+/* ---------------------------------------------------------------------------
+   4. STATUS PAGE LAYOUT
+   --------------------------------------------------------------------------- */
+
+/* Float container for the two-column section. The portal's preferential boxes
+   float, so their parent needs a clearfix or the following content rides up. */
+.status-columns {
+    padding: 0;
+    overflow: visible;
+}
+
+.status-columns::after {
+    content: "";
+    display: block;
+    clear: both;
+}
+
+/* Align the two columns' first headings to the same top edge. */
+@media only screen and (min-width: 300mm) {
+    .status-columns > .left-preferential-box > :first-child,
+    .status-columns > .right-preferential-box > :first-child {
+        margin-top: 0;
+    }
+}
+
+/* Metadata line under an incident/maintenance title. */
+.status-meta-line {
+    font-size: 0.8rem;
+    margin: 0 0 0.2rem 0;
+    opacity: 0.75;
+}
+
+.status-affected-line {
+    font-size: 0.78rem;
+    margin: 0 0 0.3rem 0;
+    opacity: 0.75;
+}
+
+
+/* ---------------------------------------------------------------------------
+   5. ADMIN CONSOLE
+   --------------------------------------------------------------------------- */
+
+/* Service key shown next to its pretty name — machine value, so monospace. */
+.service-key-label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+/* The response-time / status-code readout on the admin service cards. */
+.probe-figure {
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: bold;
+}
+
+/* Sign-out sits inline in the authenticated user bar, so it must not inherit
+   the block layout and bottom margin that submit inputs carry by default. */
+.inline-logout-form {
+    display: inline-block;
+    padding: 0;
+    float: right;
+}
+
+.inline-logout-form > input[type=submit] {
+    margin: 0;
+}
