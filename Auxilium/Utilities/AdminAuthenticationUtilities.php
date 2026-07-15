@@ -40,7 +40,7 @@ final class AdminAuthenticationUtilities
             "SELECT id, username, password_hash, display_name, is_active FROM admin_users WHERE username = :username",
             [
                 ':username' => $username,
-                ]
+            ]
         );
 
         if ($user === null || (int) $user['is_active'] !== 1)
@@ -113,8 +113,7 @@ final class AdminAuthenticationUtilities
         self::StartSession();
         $_SESSION['aux_status_login_redirect'] = $target;
 
-        header('Location: /admin/login');
-        exit;
+        NavigationUtilities::Redirect(target: "/admin/login");
     }
 
     public static function CurrentUser(): ?array
