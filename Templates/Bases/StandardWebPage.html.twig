@@ -1,16 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ _SELECTED_LANGUAGE_ }}">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Auxilium | Status</title>
-    <meta name="robots" content="noindex">
-    <link rel="stylesheet" href="/static/css/standard-web-page.css">
+    <meta id="viewport" name="viewport"
+          content="width=device-width,minimum-scale=1,initial-scale=1,maximum-scale=5,user-scalable=yes">
+    <meta name="description" content="{{ page.description }}">
+    {% block head_assets %}
+        <style>@import url("/Static/CSS/standard-web-page.css");</style>
+        {% if "dark-mode" in head_asset_options %}
+            <link rel="{# shortcut #}icon" type="image/png" href="/Static/Images/Logos/{{ _LOGO_PATH_ }}"/>
+            <style>@import url("/Static/CSS/Themes/DarkMode.css");</style>
+        {% else %}
+            <link rel="{# shortcut #}icon" type="image/png" href="/Static/Images/Logos/{{ _LOGO_CONTRAST_PATH_ }}"/>
+        {% endif %}
+        {% if "large-fonts" in head_asset_options %}
+            <style>@import url("/Static/CSS/Accessibility/LargeFonts.css");</style>
+        {% endif %}
+    {% endblock %}
+    <title>{% block title %}{{ "Status Page"|translate }}{% endblock %} - {{ _INSTANCE_NAME_ }}</title>
 </head>
+
 <body>
+<nav>
+    <div class="inner-content">
+        <a id="skip-to-content-link" href="#main-content">{{ "Skip to Content"|translate|capitalize }}</a>
+        <a id="navigation-logo" href="/">
+            <img alt="{{ _INSTANCE_NAME_ }} Logo" src="/Static/Images/Logos/{{ _LOGO_CONTRAST_PATH_ }}"/>
+            {{ _INSTANCE_NAME_ }}
+        </a>
+        <a id="navigation-logo-ultra-small" href="/">
+            <img alt="{{ _INSTANCE_NAME_ }} Logo" src="/Static/Images/Logos/{{ _LOGO_CONTRAST_PATH_ }}"/>
+        </a>
+        <div id="navigation-buttons">
+        </div>
+    </div>
+</nav>
 
-{% block content %}
-{% endblock %}
+{% block default_content_link %}
+    <div id="main-content" class="reference-element"></div>{% endblock %}
 
+
+{% block content %}{% endblock %}
+
+<div class="spacer"></div>
+
+<footer>
+    <div class="inner-content">
+        <p>
+            <strong>
+                {{ "Copyright"|translate|ndsentence }} 2015 - {{ 'now' | date('Y') }} {{ _INSTANCE_NAME_ }}
+            </strong>
+        </p>
+
+    </div>
+</footer>
+<footer>
+    <div class="inner-content">
+        <div class="logo-gallery-flow-box">
+            <!-- a href="https://www.tnlcommunityfund.org.uk/"><img id="funders-national-lottery" alt="National Lottery Community Fund logo" src="/assets/partners/national-lottery-fund-logo.png" /></a>
+            <a href="https://www.aber.ac.uk/"><img id="funders-aberystwyth-university" alt="Aberystwyth University logo" src="/assets/partners/aberystwyth-university-logo.png" /></a -->
+        </div>
+        <ul class="link-list">
+            <!-- <li><a href="/complaints-procedure">Complaints procedure</a></li>
+            <li><a href="/privacy-policy">Privacy policy &amp; GDPR</a></li>
+            <li><a href="/accessibility-statement">Accessibility statement</a></li>
+            <li><a href="/contact">Contact us</a></li>
+            -->
+            {% if GetSystemConfiguration("SystemSettings", "PrivacyPolicyUrl") %}
+                <a href="{{ GetSystemConfiguration("SystemSettings", "PrivacyPolicyUrl") }}">{{ "Privacy Policy"|translate|ndsentence }}</a>
+            {% endif %}
+            {% if GetSystemConfiguration("SystemSettings", "AccessibilityStatementUrl") %}
+                <a href="{{ GetSystemConfiguration("SystemSettings", "AccessibilityStatementUrl") }}">{{ "Accessibility Statement"|translate|ndsentence }}</a>
+            {% endif %}
+            {% if GetSystemConfiguration("SystemSettings", "ContactUsUrl") %}
+                <a href="{{ GetSystemConfiguration("SystemSettings", "ContactUsUrl") }}">{{ "Contact Us"|translate|ndsentence }}</a>
+            {% endif %}
+            {% if GetSystemConfiguration("SystemSettings", "AboutPageUrl") %}
+                <a href="{{ GetSystemConfiguration("SystemSettings", "AboutPageUrl") }}">{{ "About Us"|translate|ndsentence }}</a>
+            {% endif %}
+
+            {% if _SELECTED_LANGUAGE_ == "en-GB" %}
+                <li><a href="/lang?switch=cy-GB" lang="cy-GB">Newid iaith i'r Gymraeg (Switch language to Welsh)</a>
+                </li>
+            {% else %}
+                <li><a href="/lang?switch=en-GB" lang="en-GB">Switch language to English (Newid iaith i'r Saesneg)</a>
+                </li>
+            {% endif %}
+            <li><a href="/style?switch=dark-mode">{{ "Toggle Dark Mode"|translate|ndsentence }}</a></li>
+            <li><a href="/style?switch=large-fonts">{{ "Toggle Large Fonts"|translate|ndsentence }}</a></li>
+        </ul>
+        <div class="spacer"></div>
+        <span>{{ GetSystemConfiguration("Development", "CurrentVersion") }}</span>
+        <div class="spacer"></div>
+    </div>
+</footer>
 </body>
 </html>
