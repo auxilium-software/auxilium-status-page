@@ -22,7 +22,7 @@ final class StatusController
         return (new DateTimeImmutable('now', new DateTimeZone('UTC')))->format('Y-m-d H:i:s');
     }
 
-    public function GetCurrentServiceStates(array $services, int $degradedMs): array
+    public function GetCurrentServiceStates(int $degradedMs): array
     {
         $rows = $this->db->query_read(
             "SELECT sc.service_key, sc.checked_at_utc, sc.is_healthy, sc.response_time_in_ms, sc.status_code, sc.error_message
@@ -38,7 +38,7 @@ final class StatusController
         }
 
         $states = [];
-        foreach ($services as $key => $prettyName) {
+        foreach (ServiceController::GetServices() as $key => $prettyName) {
             $row = $latest[$key] ?? null;
 
             if ($row === null) {
