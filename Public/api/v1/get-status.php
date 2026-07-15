@@ -7,10 +7,8 @@ use Auxilium\Utilities\ConfigurationUtilities;
 
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
-const WINDOW_DAYS = 90;
-
-$config     = ConfigurationUtilities::GetUserConfiguration();
-$degradedMs = (int) ($config['Thresholds']['DegradedResponseMs'] ?? 2000);
+$windowInDays = (int)(ConfigurationUtilities::GetUserConfiguration()['Settings']['WindowInDays'] ?? throw new Exception("Config element (Settings->WindowInDays) not found"));
+$degradedMs = (int)(ConfigurationUtilities::GetUserConfiguration()['Settings']['DegradedResponseMsThreshold'] ?? throw new Exception("Config element (Settings->DegradedResponseMsThreshold) not found"));
 
 $services = [
     'portal' => 'Portal',
@@ -20,7 +18,7 @@ $services = [
 $db = new SQLiteInteractions();
 
 $nowUtc   = new DateTimeImmutable('now', new DateTimeZone('UTC'));
-$sinceUtc = $nowUtc->modify('-' . (WINDOW_DAYS - 1) . ' days')->format('Y-m-d 00:00:00');
+$sinceUtc = $nowUtc->modify('-' . ($windowInDays - 1) . ' days')->format('Y-m-d 00:00:00');
 
 $latestRows = $db->query_read(
     "SELECT sc.service_key, sc.is_healthy, sc.response_time_in_ms
@@ -56,8 +54,7 @@ foreach ($dailyRows as $row)
     $total   = (int) $row['total'];
     $healthy = (int) $row['healthy'];
 
-    $status = $healthy === $total ? 'up'
-        : ($healthy === 0 ? 'down' : 'degraded');
+    $status = $healthy === $total ? 'up' : ($healthy === 0 ? 'down' : 'degraded');
 
     $daysByService[$key][] = [
         'date'   => $row['day'],
@@ -88,7 +85,7 @@ foreach ($services as $key => $prettyName)
     $monitors[$key] = [
         'prettyName'    => $prettyName,
         'currentStatus' => $current,
-        'uptime90d'     => $uptime,
+        'uptimeOverWindowInDays' => $uptime,
         'days'          => $daysByService[$key] ?? [],
     ];
 }
@@ -96,7 +93,7 @@ foreach ($services as $key => $prettyName)
 $payload = [
     'generatedAt' => $nowUtc->format('Y-m-d\TH:i:s\Z'),
     'timezone'    => 'UTC',
-    'windowDays'  => WINDOW_DAYS,
+    'windowDays' => $windowInDays,
     'monitors'    => $monitors,
     'incidents'   => [],
     'maintenance' => [
