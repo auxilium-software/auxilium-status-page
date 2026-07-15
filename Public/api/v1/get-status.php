@@ -7,8 +7,8 @@ use Auxilium\Utilities\ConfigurationUtilities;
 
 require_once __DIR__ . '/../../../vendor/autoload.php';
 
-$windowInDays = (int)(ConfigurationUtilities::GetUserConfiguration()['Settings']['WindowInDays'] ?? throw new Exception("Config element (Settings->WindowInDays) not found"));
-$degradedMs = (int)(ConfigurationUtilities::GetUserConfiguration()['Settings']['DegradedResponseMsThreshold'] ?? throw new Exception("Config element (Settings->DegradedResponseMsThreshold) not found"));
+$windowInDays = (int)(ConfigurationUtilities::GetUserConfiguration()["UserInterfaceSettings"]["WindowInDays"] ?? throw new Exception("Config element (Settings->WindowInDays) not found"));
+$degradedMs = (int)(ConfigurationUtilities::GetUserConfiguration()["UserInterfaceSettings"]["DegradedResponseMsThreshold"] ?? throw new Exception("Config element (Settings->DegradedResponseMsThreshold) not found"));
 
 $services = [
     'portal' => 'Portal',

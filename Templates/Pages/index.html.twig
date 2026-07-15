@@ -9,7 +9,7 @@
             </section>
 
             <section aria-labelledby="h-monitors">
-                <h2 id="h-monitors">Last {{ GetUserConfiguration("Settings", "WindowInDays") }} days</h2>
+                <h2 id="h-monitors">Last {{ GetUserConfiguration("UserInterfaceSettings", "WindowInDays") }} days</h2>
                 <div id="monitors"></div>
                 <div class="uptime-legend" aria-hidden="true">
                     <span><span class="uptime-legend-swatch uptime-day-up"></span>Operational</span>
@@ -47,8 +47,8 @@
         "use strict";
 
         const STATUS_URL = "/api/v1/get-status";
-        const WINDOW_DAYS = {{ GetUserConfiguration("Settings", "WindowInDays") }};
-        const REFRESH_MS = {{ GetUserConfiguration("Settings", "RefreshIntervalInMilliseconds") }};
+        const WINDOW_DAYS = {{ GetUserConfiguration("UserInterfaceSettings", "WindowInDays") }};
+        const REFRESH_MS = {{ GetUserConfiguration("UserInterfaceSettings", "RefreshIntervalInMilliseconds") }};
 
         let TZ = "UTC";
 
