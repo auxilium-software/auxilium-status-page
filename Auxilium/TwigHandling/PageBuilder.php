@@ -4,6 +4,7 @@ namespace Auxilium\TwigHandling;
 
 use Auxilium\TwigHandling\Extensions\CommonFilters;
 use Auxilium\TwigHandling\Extensions\CommonFunctions;
+use Auxilium\Utilities\ConfigurationUtilities;
 use Auxilium\Utilities\LocalisationUtilities;
 use JetBrains\PhpStorm\NoReturn;
 use Throwable;
@@ -26,6 +27,11 @@ final class PageBuilder
         $this->twig->addGlobal('style_options', []);
         $this->twig->addGlobal('_INLINE_NODE_EXPANDED_', false);
         $this->twig->addGlobal('_INLINE_NODE_NEW_TAB_', false);
+
+        $this->twig->addGlobal('_INSTANCE_NAME_', ConfigurationUtilities::GetUserConfiguration()["SystemSettings"]["InstanceName"]);
+        $this->twig->addGlobal('_LOGO_PATH_', "AuxiliumLogo.png");
+        $this->twig->addGlobal('_LOGO_CONTRAST_PATH_', "AuxiliumLogo-White.png");
+        $this->twig->addGlobal('_SELECTED_LANGUAGE_', LocalisationUtilities::GetActiveLocale());
 
 
         $this->twig->addExtension(new CommonFilters());
@@ -98,7 +104,7 @@ final class PageBuilder
         $twig->addGlobal('_INLINE_NODE_NEW_TAB_', false);
         $twig->addGlobal('_SELECTED_LANGUAGE_', LocalisationUtilities::GetActiveLocale());
         $twig->addGlobal('_SYSTEM_BULLETIN_', []);
-        $twig->addGlobal('_INSTANCE_NAME_', "");
+        $twig->addGlobal('_INSTANCE_NAME_', ConfigurationUtilities::GetUserConfiguration()["SystemSettings"]["InstanceName"]);
         $twig->addGlobal('_LOGO_CONTRAST_PATH_', "");
         $twig->addExtension(new CommonFilters());
         // $twig->addExtension(new CommonFunctions());
