@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use Auxilium\TwigHandling\PageBuilder;
 use Auxilium\Utilities\AdminAuthenticationUtilities;
+use Auxilium\Utilities\NavigationUtilities;
 
 require_once __DIR__ . "/../../vendor/autoload.php";
 
@@ -11,8 +12,7 @@ AdminAuthenticationUtilities::StartSession();
 
 if (AdminAuthenticationUtilities::IsAuthenticated())
 {
-    header("Location: /admin");
-    exit;
+    NavigationUtilities::Redirect(target: "/admin");
 }
 
 $errorMessage = null;
@@ -41,8 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST")
             $redirect = "/admin";
         }
 
-        header("Location: " . $redirect);
-        exit;
+        NavigationUtilities::Redirect(target: $redirect);
     }
     else
     {

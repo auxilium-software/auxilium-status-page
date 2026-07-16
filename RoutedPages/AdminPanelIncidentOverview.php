@@ -25,7 +25,7 @@ $incidentId = (int) ($urlComponents[array_key_last($urlComponents)]);
 if ($incidentId <= 0)
 {
     http_response_code(404);
-    exit;
+    die();
 }
 
 $repository = new IncidentController(new SQLiteInteractions());
@@ -34,7 +34,7 @@ $incident   = $repository->GetIncident($incidentId);
 if ($incident === null)
 {
     http_response_code(404);
-    exit;
+    die();
 }
 
 $errors = [];

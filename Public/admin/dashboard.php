@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Auxilium\Controllers\MaintenanceController;
 use Auxilium\Controllers\StatusController;
 use Auxilium\ServiceInteractions\SQLiteInteractions;
 use Auxilium\TwigHandling\PageBuilder;
@@ -16,6 +17,7 @@ $config     = ConfigurationUtilities::GetUserConfiguration();
 $degradedMs = (int)($config['UserInterfaceSettings']['DegradedResponseMsThreshold'] ?? throw new Exception("Config value UserInterfaceSettings->DegradedResponseMsThreshold is not set or is missing"));
 
 $repository = new StatusController(new SQLiteInteractions());
+$maintenanceRepository = new MaintenanceController(new SQLiteInteractions());
 
 $lastCheckUtc = $repository->GetLastCheckTimeUtc();
 
@@ -31,6 +33,7 @@ PageBuilder::Render(
         'OngoingIncidents'   => $repository->GetOngoingIncidents(),
         'ResolvedIncidents'  => $repository->GetRecentResolvedIncidents(5),
         'ActiveMaintenance'  => $repository->GetActiveMaintenance(),
+        'PastMaintenance'    => $maintenanceRepository->GetRecentPastMaintenance(5),
 
         'PollerIsStale'      => $pollerIsStale,
         'LastCheckUtc'       => $lastCheckUtc,
