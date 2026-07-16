@@ -1,9 +1,16 @@
 {% extends '/Bases/StandardWebPage.html.twig' %}
 {% block content %}
+
+    <nav>
+        <div class="inner-content">
+            <a id="navigation-logo" href="/">Auxilium|3 Status</a>
+            <span id="generated" class="service-key-label"></span>
+        </div>
+    </nav>
+
     <main>
         <div class="inner-content">
-            <section class="overall-status-note overall-status-operational" id="overall" role="status"
-                     aria-live="polite">
+            <section class="overall-status-note overall-status-operational" id="overall" role="status" aria-live="polite">
                 <span class="note-heading" id="overall-text">Loading status...</span>
                 <span class="overall-status-subheading" id="overall-sub"></span>
             </section>
@@ -34,12 +41,10 @@
                 </div>
             </div>
 
-            <footer>
-                <div class="inner-content">
-                    This page refreshes automatically every 60 seconds.
-                    Times shown in <span id="tz-label">UTC</span>.
-                </div>
-            </footer>
+            <footer><div class="inner-content">
+                    This page refreshes automatically every 60 seconds. Times shown in
+                    <span id="tz-label">UTC</span>.
+                </div></footer>
         </div>
     </main>
 
@@ -80,7 +85,7 @@
             maintenance: "Maintenance in progress"
         };
 
-        function el(tag, cls, text) {
+        function createElement(tag, cls, text) {
             const e = document.createElement(tag);
             if (cls) e.className = cls;
             if (text != null) e.textContent = text;
@@ -88,13 +93,12 @@
         }
 
         function badge(kind, text) {
-            return el("span", "tag-badge-small " + kind, text);
+            return createElement("span", "tag-badge-small " + kind, text);
         }
 
         function fmtDateTime(iso) {
             try {
-                return new Date(iso).toLocaleString("en-GB",
-                    {timeZone: TZ, dateStyle: "medium", timeStyle: "short", timeZoneName: "short"});
+                return new Date(iso).toLocaleString("en-GB", {timeZone: TZ, dateStyle: "medium", timeStyle: "short", timeZoneName: "short"});
             } catch (_) {
                 return iso;
             }
@@ -102,23 +106,27 @@
 
         function fmtDate(iso) {
             try {
-                return new Date(iso).toLocaleDateString("en-GB",
-                    {timeZone: TZ, day: "numeric", month: "short", year: "numeric"});
+                return new Date(iso).toLocaleDateString("en-GB", {timeZone: TZ, day: "numeric", month: "short", year: "numeric"});
             } catch (_) {
                 return iso;
             }
         }
 
         function dayKey(date) {
-            return new Intl.DateTimeFormat("en-CA",
-                {timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit"}).format(date);
+            return new Intl.DateTimeFormat("en-CA", {timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit"}).format(date);
         }
 
         function durationText(aIso, bIso) {
             const ms = new Date(bIso) - new Date(aIso);
-            if (!(ms > 0)) return "";
+            if (!(ms > 0))
+            {
+                return "";
+            }
             const mins = Math.round(ms / 60000);
-            if (mins < 60) return mins + " min";
+            if (mins < 60)
+            {
+                return mins + " min";
+            }
             const h = Math.floor(mins / 60), m = mins % 60;
             return m ? `${h} h ${m} min` : `${h} h`;
         }
@@ -129,6 +137,7 @@
             return out;
         }
 
+        // Resolve a service key to its display name (monitors is a keyed object).
         function monitorName(data, key) {
             return data.monitors?.[key]?.prettyName || key;
         }
@@ -140,8 +149,14 @@
 
             let down = 0, degraded = 0;
             for (const mon of Object.values(data.monitors || {})) {
-                if (mon.currentStatus === "down") down++;
-                else if (mon.currentStatus === "degraded") degraded++;
+                if (mon.currentStatus === "down")
+                {
+                    down++;
+                }
+                else if (mon.currentStatus === "degraded")
+                {
+                    degraded++;
+                }
             }
             if (down > 1)
             {
@@ -176,27 +191,27 @@
             for (const [key, mon] of Object.entries(data.monitors || {})) {
                 const byDay = new Map((mon.days || []).map(d => [d.date, d]));
 
-                const box = el("div", "status-box");
-                const head = el("h4", "status-box-header");
+                const box = createElement("div", "status-box");
+                const head = createElement("h4", "status-box-header");
                 head.appendChild(document.createTextNode(mon.prettyName || key));
-                head.appendChild(el("span", "status-box-header-spacer"));
-                head.appendChild(badge(STATUS_BADGE[mon.currentStatus] || "neutral", STATUS_LABEL[mon.currentStatus] || mon.currentStatus));
+                head.appendChild(createElement("span", "status-box-header-spacer"));
+                head.appendChild(badge(STATUS_BADGE[mon.currentStatus] || "neutral",
+                    STATUS_LABEL[mon.currentStatus] || mon.currentStatus));
                 box.appendChild(head);
 
-                const body = el("div", "status-box-body");
+                const body = createElement("div", "status-box-body");
                 if (mon.uptimeOverWindowInDays != null)
                 {
-                    body.appendChild(el("div", "uptime-summary", mon.uptimeOverWindowInDays.toFixed(2) + `% uptime over ${WINDOW_DAYS} days`));
+                    body.appendChild(createElement("div", "uptime-summary", mon.uptimeOverWindowInDays.toFixed(2) + `% uptime over ${WINDOW_DAYS} days`));
                 }
 
-                const bar = el("div", "uptime-bar");
+                const bar = createElement("div", "uptime-bar");
                 bar.setAttribute("role", "img");
-                bar.setAttribute("aria-label",
-                    `${mon.prettyName || key}: ${mon.uptimeOverWindowInDays != null ? mon.uptimeOverWindowInDays.toFixed(2) + "% uptime over " : ""}the last ${WINDOW_DAYS} days`);
+                bar.setAttribute("aria-label", `${mon.prettyName || key}: ${mon.uptimeOverWindowInDays != null ? mon.uptimeOverWindowInDays.toFixed(2) + "% uptime over " : ""}the last ${WINDOW_DAYS} days`);
                 for (const date of axis) {
                     const d = byDay.get(date);
                     const status = d ? d.status : "nodata";
-                    const cell = el("div", "uptime-day uptime-day-" + status);
+                    const cell = createElement("div", "uptime-day uptime-day-" + status);
                     cell.tabIndex = 0;
                     const uptimeTxt = d && d.uptime != null ? ` - ${d.uptime}% uptime` : "";
                     cell.title = `${fmtDate(date)}: ${STATUS_LABEL[status]}${uptimeTxt}`;
@@ -205,9 +220,9 @@
                 }
                 body.appendChild(bar);
 
-                const ax = el("div", "uptime-axis");
-                ax.appendChild(el("span", null, `${WINDOW_DAYS} days ago`));
-                ax.appendChild(el("span", null, "Today"));
+                const ax = createElement("div", "uptime-axis");
+                ax.appendChild(createElement("span", null, `${WINDOW_DAYS} days ago`));
+                ax.appendChild(createElement("span", null, "Today"));
                 body.appendChild(ax);
 
                 box.appendChild(body);
@@ -220,42 +235,46 @@
             host.textContent = "";
             const incidents = data.incidents || [];
             if (!incidents.length) {
-                host.appendChild(el("p", "no-data-badge", "No incidents reported in the last 90 days."));
+                host.appendChild(createElement("p", "no-data-badge", "No incidents reported in the last 90 days."));
                 return;
             }
             for (const inc of incidents) {
-                const sev = (inc.impact === "major" || inc.impact === "critical") ? "status-box-negative"
-                    : inc.impact === "minor" ? "status-box-neutral" : "status-box-brand";
-                const box = el("div", "status-box " + sev);
+                const sev = (inc.impact === "major" || inc.impact === "critical") ? "status-box-negative" : inc.impact === "minor" ? "status-box-neutral" : "status-box-brand";
+                const box = createElement("div", "status-box " + sev);
 
-                const head = el("h4", "status-box-header");
+                const head = createElement("h4", "status-box-header");
                 head.appendChild(document.createTextNode(inc.title));
-                head.appendChild(el("span", "status-box-header-spacer"));
+                head.appendChild(createElement("span", "status-box-header-spacer"));
                 head.appendChild(badge(inc.status === "resolved" ? "positive-badge" : "neutral-badge", inc.status));
                 box.appendChild(head);
 
-                const body = el("div", "status-box-body");
+                const body = createElement("div", "status-box-body");
 
-                let when = (inc.impact ? inc.impact[0].toUpperCase() + inc.impact.slice(1) + " impact · " : "")
-                    + "started " + fmtDateTime(inc.startedAt);
+                let when = (inc.impact ? inc.impact[0].toUpperCase() + inc.impact.slice(1) + " impact · " : "") + "started " + fmtDateTime(inc.startedAt);
                 if (inc.resolvedAt) {
                     when += " · resolved " + fmtDateTime(inc.resolvedAt);
                     const dur = durationText(inc.startedAt, inc.resolvedAt);
-                    if (dur) when += ` · ${dur}`;
-                } else when += " · ongoing";
-                body.appendChild(el("div", "status-meta-line", when));
+                    if (dur)
+                    {
+                        when += ` · ${dur}`;
+                    }
+                }
+                else {
+                    when += " · ongoing";
+                }
+                body.appendChild(createElement("div", "status-meta-line", when));
 
                 const affected = (inc.affected || []).map(k => monitorName(data, k));
-                if (affected.length) body.appendChild(el("div", "status-affected-line", "Affected: " + affected.join(", ")));
+                if (affected.length) body.appendChild(createElement("div", "status-affected-line", "Affected: " + affected.join(", ")));
 
-                const tl = el("ul", "timeline-list");
+                const tl = createElement("ul", "timeline-list");
                 for (const u of (inc.updates || [])) {
-                    const li = el("li", "timeline-entry");
-                    const line = el("div");
-                    line.appendChild(el("span", "timeline-entry-time", fmtDateTime(u.postedAt)));
-                    line.appendChild(el("span", "timeline-entry-title", u.status));
+                    const li = createElement("li", "timeline-entry");
+                    const line = createElement("div");
+                    line.appendChild(createElement("span", "timeline-entry-time", fmtDateTime(u.postedAt)));
+                    line.appendChild(createElement("span", "timeline-entry-title", u.status));
                     li.appendChild(line);
-                    li.appendChild(el("p", "timeline-entry-description", u.body));
+                    li.appendChild(createElement("p", "timeline-entry-description", u.body));
                     tl.appendChild(li);
                 }
                 body.appendChild(tl);
@@ -268,25 +287,28 @@
             const host = document.getElementById(hostId);
             host.textContent = "";
             if (!items || !items.length) {
-                host.appendChild(el("p", "no-data-badge",
-                    upcoming ? "No maintenance scheduled." : "No past maintenance to show."));
+                host.appendChild(createElement("p", "no-data-badge", upcoming ? "No maintenance scheduled." : "No past maintenance to show."));
                 return;
             }
             for (const m of items) {
-                const box = el("div", "status-box status-box-brand");
-                const head = el("h4", "status-box-header");
+                const box = createElement("div", "status-box status-box-brand");
+                const head = createElement("h4", "status-box-header");
                 head.appendChild(document.createTextNode(m.title));
-                head.appendChild(el("span", "status-box-header-spacer"));
-                head.appendChild(badge(m.status === "completed" ? "positive" : "neutral",
-                    m.status.replace("_", " ")));
+                head.appendChild(createElement("span", "status-box-header-spacer"));
+                head.appendChild(badge(m.status === "completed" ? "positive" : "neutral", m.status.replace("_", " ")));
                 box.appendChild(head);
 
-                const body = el("div", "status-box-body");
-                body.appendChild(el("div", "status-meta-line",
-                    `${fmtDateTime(m.startsAt)} → ${fmtDateTime(m.endsAt)} (${durationText(m.startsAt, m.endsAt)})`));
+                const body = createElement("div", "status-box-body");
+                body.appendChild(createElement("div", "status-meta-line", `${fmtDateTime(m.startsAt)} → ${fmtDateTime(m.endsAt)} (${durationText(m.startsAt, m.endsAt)})`));
                 const affected = (m.affected || []).map(k => monitorName(data, k));
-                if (affected.length) body.appendChild(el("div", "status-affected-line", "Affects: " + affected.join(", ")));
-                if (m.body) body.appendChild(el("p", null, m.body));
+                if (affected.length)
+                {
+                    body.appendChild(createElement("div", "status-affected-line", "Affects: " + affected.join(", ")));
+                }
+                if (m.body)
+                {
+                    body.appendChild(createElement("p", null, m.body));
+                }
 
                 box.appendChild(body);
                 host.appendChild(box);
@@ -314,7 +336,10 @@
         async function load() {
             try {
                 const res = await fetch(STATUS_URL, {cache: "no-store"});
-                if (!res.ok) throw new Error("HTTP " + res.status);
+                if (!res.ok)
+                {
+                    throw new Error("HTTP " + res.status);
+                }
                 render(await res.json());
             } catch (err) {
                 renderLoadFailure();
