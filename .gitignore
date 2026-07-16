@@ -17,3 +17,4 @@ phpDocumentor.phar
 # Dev (Misc) Files
 *.jar
 nohup.out
+Cache/MissingTranslations.json
