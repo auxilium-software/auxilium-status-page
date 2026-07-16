@@ -30,7 +30,11 @@ final class MigrationRunner
 
     public function GetCurrentVersion(): int
     {
-        return (int) $this->pdo->query('PRAGMA user_version')->fetchColumn();
+        $statement = $this->pdo->query('PRAGMA user_version');
+        $version   = (int) $statement->fetchColumn();
+        $statement->closeCursor();
+
+        return $version;
     }
 
     public function GetLatestAvailableVersion(): int
@@ -46,7 +50,7 @@ final class MigrationRunner
 
         try
         {
-            $this->pdo->exec('PRAGMA journal_mode = WAL');
+            $this->pdo->query('PRAGMA journal_mode = WAL')->fetchAll();
             $this->EnsureMigrationsTable();
 
             $current  = $this->GetCurrentVersion();
@@ -119,7 +123,8 @@ final class MigrationRunner
         }
 
         $this->pdo->exec('PRAGMA foreign_keys = OFF');
-        $this->pdo->beginTransaction();
+
+        $this->pdo->exec('BEGIN');
 
         try
         {
@@ -128,7 +133,10 @@ final class MigrationRunner
                 $this->pdo->exec($statement);
             }
 
-            $violations = $this->pdo->query('PRAGMA foreign_key_check')->fetchAll();
+            $check      = $this->pdo->query('PRAGMA foreign_key_check');
+            $violations = $check->fetchAll();
+            $check->closeCursor();
+
             if ($violations !== [])
             {
                 throw new RuntimeException(
@@ -139,7 +147,8 @@ final class MigrationRunner
             $this->pdo->exec("PRAGMA user_version = $version");
 
             $stmt = $this->pdo->prepare(
-                "INSERT INTO _schema_migrations (version, name, applied_at_utc) VALUES (:version, :name, :applied_at)"
+                "INSERT INTO _schema_migrations (version, name, applied_at_utc)
+                 VALUES (:version, :name, :applied_at)"
             );
             $stmt->execute([
                 ':version'    => $version,
@@ -147,14 +156,11 @@ final class MigrationRunner
                 ':applied_at' => (new DateTimeImmutable('now', new DateTimeZone('UTC')))->format('Y-m-d H:i:s'),
             ]);
 
-            $this->pdo->commit();
+            $this->pdo->exec('COMMIT');
         }
         catch (Throwable $e)
         {
-            if ($this->pdo->inTransaction())
-            {
-                $this->pdo->rollBack();
-            }
+            try { $this->pdo->exec('ROLLBACK'); } catch (Throwable) {}
 
             $this->pdo->exec('PRAGMA foreign_keys = ON');
 
@@ -247,10 +253,21 @@ final class MigrationRunner
             return;
         }
 
-        $timestamp  = (new DateTimeImmutable('now', new DateTimeZone('UTC')))->format('Ymd-His');
-        $backupPath = $this->databaseFilePath . '.' . $timestamp . '.bak';
+        if (!is_file($this->databaseFilePath))
+        {
+            return;
+        }
 
-        $this->pdo->exec('VACUUM INTO ' . $this->pdo->quote($backupPath));
+        $timestamp = (new DateTimeImmutable('now', new DateTimeZone('UTC')))->format('Ymd-His');
+
+        foreach (['', '-wal', '-shm'] as $suffix)
+        {
+            $source = $this->databaseFilePath . $suffix;
+            if (is_file($source))
+            {
+                copy($source, $this->databaseFilePath . '.' . $timestamp . '.bak' . $suffix);
+            }
+        }
     }
 
     private function AcquireLock(): void
