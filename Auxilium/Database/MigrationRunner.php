@@ -123,7 +123,10 @@ final class MigrationRunner
 
         try
         {
-            $this->pdo->exec($sql);
+            foreach ($this->SplitStatements($sql) as $statement)
+            {
+                $this->pdo->exec($statement);
+            }
 
             $violations = $this->pdo->query('PRAGMA foreign_key_check')->fetchAll();
             if ($violations !== [])
@@ -208,6 +211,24 @@ final class MigrationRunner
         return $migrations;
     }
 
+    private function SplitStatements(string $sql): array
+    {
+        $sql = preg_replace('/--[^\n]*/', '', $sql) ?? $sql;
+        $sql = preg_replace('#/\*.*?\*/#s', '', $sql) ?? $sql;
+
+        $statements = [];
+        foreach (explode(';', $sql) as $fragment)
+        {
+            $fragment = trim($fragment);
+            if ($fragment !== '')
+            {
+                $statements[] = $fragment;
+            }
+        }
+
+        return $statements;
+    }
+
     private function EnsureMigrationsTable(): void
     {
         $this->pdo->exec(
@@ -221,6 +242,11 @@ final class MigrationRunner
 
     private function Backup(): void
     {
+        if ($this->databaseFilePath === ':memory:')
+        {
+            return;
+        }
+
         $timestamp  = (new DateTimeImmutable('now', new DateTimeZone('UTC')))->format('Ymd-His');
         $backupPath = $this->databaseFilePath . '.' . $timestamp . '.bak';
 
@@ -229,7 +255,7 @@ final class MigrationRunner
 
     private function AcquireLock(): void
     {
-        if ($this->databaseFilePath === null || $this->databaseFilePath === ':memory:')
+        if ($this->databaseFilePath === ':memory:')
         {
             return;
         }
