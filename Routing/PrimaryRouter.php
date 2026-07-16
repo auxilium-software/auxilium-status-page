@@ -44,6 +44,7 @@ if (is_file($rawFile)) {
 
 // 4. Custom regex routes
 $routes = [
+    "#^/admin/incidents/.+#" => __DIR__ . '/../RoutedPages/AdminPanelIncidentOverview.php',
 ];
 
 foreach ($routes as $pattern => $file)
