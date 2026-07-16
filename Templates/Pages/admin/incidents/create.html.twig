@@ -1,0 +1,101 @@
+{% extends '/Bases/StandardWebPage.html.twig' %}
+{% block content %}
+    <main>
+        <div class="inner-content">
+
+            <div class="navigation-breadcrumb-container">
+                <a href="/admin" class="navigation-breadcrumb"><span>Dashboard</span></a>
+                <span class="navigation-breadcrumb"><span>Declare incident</span></span>
+            </div>
+
+            <h1>Declare incident</h1>
+
+            {% if Errors is not empty %}
+                <div class="error-toast" role="alert">
+                    {% for error in Errors %}
+                        <p class="no-lower-margin">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="post" action="/admin/incidents/create">
+                <input type="hidden" name="csrf_token" value="{{ CsrfToken }}">
+
+                <fieldset>
+                    <legend>What is happening?</legend>
+
+                    <label for="title">Title</label>
+                    <input type="text"
+                           id="title"
+                           name="title"
+                           value="{{ Submitted.title }}"
+                           placeholder="e.g. Portal and API unavailable"
+                           required
+                           autofocus>
+
+                    <label for="body">Description</label>
+                    <textarea id="body"
+                              name="body"
+                              rows="5"
+                              class="fullwidth-text-input"
+                              placeholder="What users are seeing, and what you know so far."
+                              required>{{ Submitted.body }}</textarea>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Classification</legend>
+
+                    <label for="impact">Impact</label>
+                    <select id="impact" name="impact">
+                        {% for impact in Impacts %}
+                            <option value="{{ impact }}" {{ Submitted.impact == impact ? 'selected' : '' }}>
+                                {{ impact|capitalize }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="status">Status</label>
+                    <select id="status" name="status">
+                        {% for status in Statuses %}
+                            <option value="{{ status }}" {{ Submitted.status == status ? 'selected' : '' }}>
+                                {{ status|capitalize }}
+                            </option>
+                        {% endfor %}
+                    </select>
+
+                    <label for="started_at">Started at (UTC)</label>
+                    <input type="datetime-local"
+                           id="started_at"
+                           name="started_at"
+                           value="{{ Submitted.startedAt }}">
+                    <p class="file-meta-info">
+                        Leave blank to use the current time.
+                        Set this to when the outage actually began, which is usually earlier than now.
+                    </p>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Affected services</legend>
+
+                    {% for key, prettyName in Services %}
+                        <div class="checkbox-holder">
+                            <input type="checkbox"
+                                   id="affected_{{ key }}"
+                                   name="affected[]"
+                                   value="{{ key }}"
+                                    {{ key in Submitted.affected ? 'checked' : '' }}>
+                            <label for="affected_{{ key }}"><p>{{ prettyName }}</p></label>
+                        </div>
+                    {% endfor %}
+                </fieldset>
+
+                <div class="button-box">
+                    <input type="submit" value="Declare incident">
+                    <a href="/admin" class="button less-important-button">Cancel</a>
+                </div>
+            </form>
+
+        </div>
+    </main>
+
+{% endblock %}
