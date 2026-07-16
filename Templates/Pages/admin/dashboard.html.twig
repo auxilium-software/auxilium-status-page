@@ -14,22 +14,22 @@
     <main>
         <div class="inner-content">
             <div class="navigation-breadcrumb-container">
-                <a href="/" class="navigation-breadcrumb"><span>Status Page</span></a>
-                <span class="navigation-breadcrumb"><span>Admin Dashboard</span></span>
+                <a href="/" class="navigation-breadcrumb"><span>{{ "Status Page"|translate }}</span></a>
+                <span class="navigation-breadcrumb"><span>{{ "Admin Dashboard"|translate }}</span></span>
             </div>
 
-            <h1>Dashboard</h1>
+            <h1>{{ "Dashboard"|translate }}</h1>
 
             {% if PollerIsStale %}
                 <div class="critical-note">
-                    <span class="note-heading">Poller is not running</span>
+                    <span class="note-heading">{{ "Poller is not running"|translate }}</span>
                     <p>
                         {% if LastCheckUtc %}
                             The last service check was recorded at <strong>{{ LastCheckUtc }} UTC</strong>.
                         {% else %}
-                            No service checks have ever been recorded.
+                            {{ "No service checks have ever been recorded."|translate }}
                         {% endif %}
-                        Service states below are stale and cannot be relied upon.
+                        {{ "Service states below are stale and cannot be relied upon."|translate }}
                     </p>
                 </div>
             {% endif %}
@@ -43,36 +43,36 @@
                         <span class="status-box-header-spacer"></span>
                         <span class="tag-badge-small {% if service.status == 'up' %}positive-badge{% elseif service.status == 'down' %}negative-badge{% else %}neutral-badge{% endif %}">
                         {% if service.status == 'up' %}
-                            Operational
+                            {{ "Operational"|translate }}
                         {% elseif service.status == 'degraded' %}
-                            Degraded
+                            {{ "Degraded"|translate }}
                         {% elseif service.status == 'down' %}
-                            Outage
+                            {{ "Outage"|translate }}
                         {% else %}
-                            No data
+                            {{ "No data"|translate }}
                         {% endif %}
                     </span>
                     </h4>
                     <div class="status-box-body">
                         <dl>
-                            <dt>Last checked</dt>
+                            <dt>{{ "Last checked"|translate }}</dt>
                             <dd>
                                 {% if service.checkedAtUtc %}
                                     {{ service.checkedAtUtc }} UTC
                                     {% if service.isStale %}
-                                        <span class="tag-badge-small negative-badge">Stale</span>
+                                        <span class="tag-badge-small negative-badge">{{ "Stale"|translate }}</span>
                                     {% endif %}
                                 {% else %}
-                                    <span class="no-data-badge">Never</span>
+                                    <span class="no-data-badge">{{ "Never"|translate }}</span>
                                 {% endif %}
                             </dd>
 
-                            <dt>Response time</dt>
+                            <dt>{{ "Response time"|translate }}</dt>
                             <dd>
                                 {% if service.responseMs is not null %}
                                     {{ service.responseMs }} ms
                                 {% else %}
-                                    <span class="no-data-badge">No data</span>
+                                    <span class="no-data-badge">{{ "No data"|translate }}</span>
                                 {% endif %}
                             </dd>
 
@@ -81,12 +81,12 @@
                                 {% if service.statusCode %}
                                     {{ service.statusCode }}
                                 {% else %}
-                                    <span class="no-data-badge">Unreachable</span>
+                                    <span class="no-data-badge">{{ "Unreachable"|translate }}</span>
                                 {% endif %}
                             </dd>
 
                             {% if service.errorMessage %}
-                                <dt>Error</dt>
+                                <dt>{{ "Error"|translate }}</dt>
                                 <dd class="error-text">{{ service.errorMessage }}</dd>
                             {% endif %}
                         </dl>
@@ -96,16 +96,16 @@
 
             <div class="status-columns">
                 <div class="left-preferential-box">
-                    <h2>Incidents</h2>
+                    <h2>{{ "Incidents"|translate }}</h2>
 
                     <div class="button-box">
-                        <a href="/admin/incidents/create" class="button">Declare incident</a>
+                        <a href="/admin/incidents/create" class="button">{{ "Declare incident"|translate }}</a>
                     </div>
 
-                    <h3>Ongoing</h3>
+                    <h3>{{ "Ongoing"|translate }}</h3>
 
                     {% if OngoingIncidents is empty %}
-                        <p class="no-data-badge">No ongoing incidents.</p>
+                        <p class="no-data-badge">{{ "No ongoing incidents."|translate }}</p>
                     {% else %}
                         {% for incident in OngoingIncidents %}
                             <div class="status-box {% if incident.impact in ['major', 'critical'] %}status-box-negative{% else %}status-box-neutral{% endif %}">
@@ -116,23 +116,25 @@
                                 </h4>
                                 <div class="status-box-body">
                                     <p class="status-meta-line">
-                                        {{ incident.impact|capitalize }} impact &middot;
-                                        started {{ incident.started_at_utc }} UTC &middot;
+                                        {{ incident.impact|capitalize }} impact
+                                        -
+                                        started {{ incident.started_at_utc }} UTC
+                                        -
                                         {{ incident.update_count }} update{{ incident.update_count == 1 ? '' : 's' }}
                                     </p>
                                     {% if incident.affected_keys %}
                                         <p class="status-affected-line">Affected: {{ incident.affected_keys }}</p>
                                     {% endif %}
-                                    <a href="/admin/incidents/{{ incident.id }}" class="navigational-link">Post update</a>
+                                    <a href="/admin/incidents/{{ incident.id }}" class="navigational-link">{{ "Post update"|translate }}</a>
                                 </div>
                             </div>
                         {% endfor %}
                     {% endif %}
 
-                    <h3>Recently resolved</h3>
+                    <h3>{{ "Recently resolved"|translate }}</h3>
 
                     {% if ResolvedIncidents is empty %}
-                        <p class="no-data-badge">No resolved incidents.</p>
+                        <p class="no-data-badge">{{ "No resolved incidents."|translate }}</p>
                     {% else %}
                         <ul class="collection-list">
                             {% for incident in ResolvedIncidents %}
@@ -150,16 +152,16 @@
                 </div>
 
                 <div class="right-preferential-box">
-                    <h2>Maintenance</h2>
+                    <h2>{{ "Maintenance"|translate }}</h2>
 
                     <div class="button-box">
-                        <a href="/admin/maintenance/create" class="button">Schedule maintenance</a>
+                        <a href="/admin/maintenance/create" class="button">{{ "Schedule maintenance"|translate }}</a>
                     </div>
 
-                    <h3>Scheduled & in progress</h3>
+                    <h3>{{ "Scheduled & in progress"|translate }}</h3>
 
                     {% if ActiveMaintenance is empty %}
-                        <p class="no-data-badge">No maintenance scheduled.</p>
+                        <p class="no-data-badge">{{ "No maintenance scheduled."|translate }}</p>
                     {% else %}
                         {% for window in ActiveMaintenance %}
                             <div class="status-box status-box-brand">
@@ -177,7 +179,7 @@
                                     {% if window.affected_keys %}
                                         <p class="status-affected-line">Affects: {{ window.affected_keys }}</p>
                                     {% endif %}
-                                    <a href="/admin/maintenance/{{ window.id }}" class="navigational-link">Edit</a>
+                                    <a href="/admin/maintenance/{{ window.id }}" class="navigational-link">{{ "Edit"|translate }}</a>
                                 </div>
                             </div>
                         {% endfor %}
@@ -186,7 +188,7 @@
                     <h3>Recently completed</h3>
 
                     {% if PastMaintenance is empty %}
-                        <p class="no-data-badge">No past maintenance.</p>
+                        <p class="no-data-badge">{{ "No past maintenance."|translate }}</p>
                     {% else %}
                         <ul class="collection-list">
                             {% for window in PastMaintenance %}
@@ -195,7 +197,7 @@
                                         {{ window.title_text }}
                                     </a>
                                     <span class="file-meta-info">
-                                    {{ window.status|capitalize }} &middot; ended {{ window.ends_at_utc }} UTC
+                                    {{ window.status|capitalize }} - ended {{ window.ends_at_utc }} UTC
                                 </span>
                                 </li>
                             {% endfor %}
@@ -203,13 +205,13 @@
                     {% endif %}
                 </div>
 
-                <h2>System</h2>
+                <h2>{{ "System"|translate }}</h2>
                 <div class="marked-section">
                     <dl>
-                        <dt>Last check</dt>
-                        <dd>{{ LastCheckUtc ? LastCheckUtc ~ ' UTC' : 'Never' }}</dd>
+                        <dt>{{ "Last check"|translate }}</dt>
+                        <dd>{{ LastCheckUtc ? LastCheckUtc ~ ' UTC'|translate : 'Never'|translate }}</dd>
 
-                        <dt>Checks recorded</dt>
+                        <dt>{{ "Checks recorded"|translate }}</dt>
                         <dd>{{ CheckCount }}</dd>
                     </dl>
                 </div>

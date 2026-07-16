@@ -317,7 +317,7 @@ final class LocalisationUtilities
 
     private static function logMissingTranslation(string $text, string $language): void
     {
-        $filePath = __DIR__ . "/../../LocalStorage/Cache/Development/MissingTranslations.json";
+        $filePath = __DIR__ . "/../../Cache/MissingTranslations.json";
 
         $translations = file_exists($filePath)
             ? json_decode(file_get_contents($filePath), true, flags: JSON_THROW_ON_ERROR)

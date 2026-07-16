@@ -5,12 +5,12 @@
         <div class="inner-content">
 
             <div class="navigation-breadcrumb-container">
-                <a href="/" class="navigation-breadcrumb"><span>Status Page</span></a>
-                <a href="/admin" class="navigation-breadcrumb"><span>Admin Dashboard</span></a>
-                <span class="navigation-breadcrumb"><span>Schedule Maintenance</span></span>
+                <a href="/" class="navigation-breadcrumb"><span>{{ "Status Page"|translate }}</span></a>
+                <a href="/admin" class="navigation-breadcrumb"><span>{{ "Admin Dashboard"|translate }}</span></a>
+                <span class="navigation-breadcrumb"><span>{{ "Schedule Maintenance"|translate }}</span></span>
             </div>
 
-            <h1>Schedule maintenance</h1>
+            <h1>{{ "Schedule maintenance"|translate }}</h1>
 
             {% if Errors is not empty %}
                 <div class="error-toast" role="alert">
@@ -24,49 +24,49 @@
                 <input type="hidden" name="csrf_token" value="{{ CsrfToken }}">
 
                 <fieldset>
-                    <legend>What is planned?</legend>
+                    <legend>{{ "What is planned?"|translate }}</legend>
 
-                    <label for="title">Title</label>
+                    <label for="title">{{ "Title"|translate }}</label>
                     <input type="text"
                            id="title"
                            name="title"
                            value="{{ Submitted.title }}"
-                           placeholder="e.g. Database storage migration"
+                           placeholder="{{ "e.g. Database storage migration"|translate }}"
                            required
                            autofocus>
 
-                    <label for="body">Description</label>
+                    <label for="body">{{ "Description"|translate }}</label>
                     <textarea id="body"
                               name="body"
                               rows="5"
                               class="fullwidth-text-input"
-                              placeholder="What is happening, and what impact users should expect."
+                              placeholder="{{ "What is happening, and what impact users should expect."|translate }}"
                               required>{{ Submitted.body }}</textarea>
                 </fieldset>
 
                 <fieldset>
-                    <legend>Window (UTC)</legend>
+                    <legend>{{ "Window (UTC)"|translate }}</legend>
 
-                    <label for="starts_at">Starts at</label>
+                    <label for="starts_at">{{ "Starts at"|translate }}</label>
                     <input type="datetime-local"
                            id="starts_at"
                            name="starts_at"
                            value="{{ Submitted.startsAt }}"
                            required>
 
-                    <label for="ends_at">Ends at</label>
+                    <label for="ends_at">{{ "Ends at"|translate }}</label>
                     <input type="datetime-local"
                            id="ends_at"
                            name="ends_at"
                            value="{{ Submitted.endsAt }}"
                            required>
                     <p class="file-meta-info">
-                        Times are entered and stored in UTC.
+                        {{ "Times are entered and stored in UTC."|translate }}
                     </p>
                 </fieldset>
 
                 <fieldset>
-                    <legend>Affected services</legend>
+                    <legend>{{ "Affected services"|translate }}</legend>
 
                     {% for key, prettyName in Services %}
                         <div class="checkbox-holder">
@@ -81,8 +81,8 @@
                 </fieldset>
 
                 <div class="button-box">
-                    <input type="submit" value="Schedule maintenance">
-                    <a href="/admin" class="button less-important-button">Cancel</a>
+                    <input type="submit" value="{{ "Schedule maintenance"|translate }}">
+                    <a href="/admin" class="button less-important-button">{{ "Cancel"|translate }}</a>
                 </div>
             </form>
 

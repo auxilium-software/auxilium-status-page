@@ -4,8 +4,8 @@
         <div class="inner-content">
 
             <div class="navigation-breadcrumb-container">
-                <a href="/" class="navigation-breadcrumb"><span>Status Page</span></a>
-                <a href="/admin" class="navigation-breadcrumb"><span>Admin Dashboard</span></a>
+                <a href="/" class="navigation-breadcrumb"><span>{{ "Status Page"|translate }}</span></a>
+                <a href="/admin" class="navigation-breadcrumb"><span>{{ "Admin Dashboard"|translate }}</span></a>
                 <span class="navigation-breadcrumb"><span>{{ Incident.title_text }}</span></span>
             </div>
 
@@ -28,7 +28,7 @@
 
             {% if not Incident.resolved_at_utc %}
                 <div class="warning-note">
-                    <strong>This incident is ongoing.</strong>
+                    <strong>{{ "This incident is ongoing."|translate }}</strong>
                     Post an update with the status set to <em>Resolved</em> to close it.
                 </div>
             {% endif %}
@@ -36,15 +36,15 @@
             <div class="status-columns">
                 <div class="left-preferential-box">
 
-                    <h2>Post an update</h2>
+                    <h2>{{ "Post an update"|translate }}</h2>
 
                     <form method="post" action="/admin/incidents/{{ Incident.id }}">
                         <input type="hidden" name="csrf_token" value="{{ CsrfToken }}">
 
                         <fieldset>
-                            <legend>New update</legend>
+                            <legend>{{ "New update"|translate }}</legend>
 
-                            <label for="status">Status</label>
+                            <label for="status">{{ "Status"|translate }}</label>
                             <select id="status" name="status">
                                 {% for status in Statuses %}
                                     <option value="{{ status }}" {{ Submitted.status == status ? 'selected' : '' }}>
@@ -56,27 +56,27 @@
                                 Selecting <strong>Resolved</strong> closes the incident.
                             </p>
 
-                            <label for="title">Title</label>
+                            <label for="title">{{ "Title"|translate }}</label>
                             <input type="text"
                                    id="title"
                                    name="title"
                                    value="{{ Submitted.title }}"
-                                   placeholder="e.g. Root cause identified"
+                                   placeholder="{{ "e.g. Root cause identified"|translate }}"
                                    required>
 
-                            <label for="body">Update</label>
+                            <label for="body">{{ "Update"|translate }}</label>
                             <textarea id="body"
                                       name="body"
                                       rows="4"
                                       class="fullwidth-text-input"
-                                      placeholder="What has changed since the last update."
+                                      placeholder="{{ "What has changed since the last update."|translate }}"
                                       required>{{ Submitted.body }}</textarea>
 
-                            <input type="submit" value="Post update">
+                            <input type="submit" value="{{ "Post update"|translate }}">
                         </fieldset>
                     </form>
 
-                    <h2>Update history</h2>
+                    <h2>{{ "Update history"|translate }}</h2>
 
                     <ul class="timeline-list">
                         {% for update in Updates %}
@@ -92,21 +92,21 @@
 
                 <div class="right-preferential-box">
 
-                    <h2>Details</h2>
+                    <h2>{{ "Details"|translate }}</h2>
 
                     <div class="marked-section">
                         <dl>
-                            <dt>Impact</dt>
+                            <dt>{{ "Impact"|translate }}</dt>
                             <dd>
                             <span class="tag-badge-inline-large {% if Incident.impact in ['major', 'critical'] %}negative-badge{% elseif Incident.impact == 'minor' %}neutral-badge{% endif %}">
                                 {{ Incident.impact|capitalize }}
                             </span>
                             </dd>
 
-                            <dt>Started</dt>
+                            <dt>{{ "Started"|translate }}</dt>
                             <dd>{{ Incident.started_at_utc }} UTC</dd>
 
-                            <dt>Resolved</dt>
+                            <dt>{{ "Resolved"|translate }}</dt>
                             <dd>
                                 {% if Incident.resolved_at_utc %}
                                     {{ Incident.resolved_at_utc }} UTC
@@ -115,19 +115,19 @@
                                 {% endif %}
                             </dd>
 
-                            <dt>Declared by</dt>
+                            <dt>{{ "Declared by"|translate }}</dt>
                             <dd>{{ Incident.created_by }}</dd>
 
-                            <dt>Declared at</dt>
+                            <dt>{{ "Declared at"|translate }}</dt>
                             <dd>{{ Incident.created_at_utc }} UTC</dd>
                         </dl>
                     </div>
 
-                    <h2>Affected services</h2>
+                    <h2>{{ "Affected services"|translate }}</h2>
 
                     <div class="marked-section">
                         {% if AffectedKeys is empty %}
-                            <p class="no-data-badge">None tagged.</p>
+                            <p class="no-data-badge">{{ "None tagged."|translate }}</p>
                         {% else %}
                             {% for key in AffectedKeys %}
                                 <span class="removeable-badge">{{ Services[key] ?? key }}</span>

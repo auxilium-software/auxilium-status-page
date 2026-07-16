@@ -5,8 +5,8 @@
         <div class="inner-content">
 
             <div class="navigation-breadcrumb-container">
-                <a href="/" class="navigation-breadcrumb"><span>Status Page</span></a>
-                <a href="/admin" class="navigation-breadcrumb"><span>Admin Dashboard</span></a>
+                <a href="/" class="navigation-breadcrumb"><span>{{ "Status Page"|translate }}</span></a>
+                <a href="/admin" class="navigation-breadcrumb"><span>{{ "Admin Dashboard"|translate }}</span></a>
                 <span class="navigation-breadcrumb"><span>{{ Maintenance.title_text }}</span></span>
             </div>
 
@@ -31,7 +31,7 @@
             {% endif %}
 
             <div class="marked-section">
-                <h3 class="low-margin-heading">Lifecycle</h3>
+                <h3 class="low-margin-heading">{{ "Lifecycle"|translate }}</h3>
                 <div class="button-box">
                     {% for status in Statuses %}
                         {% if status != Maintenance.status %}
@@ -52,38 +52,36 @@
 
             <div class="status-columns">
                 <div class="left-preferential-box">
-                    <h2>Edit plan</h2>
+                    <h2>{{ "Edit plan"|translate }}</h2>
 
                     <form method="post" action="/admin/maintenance/{{ Maintenance.id }}">
                         <input type="hidden" name="csrf_token" value="{{ CsrfToken }}">
                         <input type="hidden" name="action" value="update">
 
                         <fieldset>
-                            <legend>Details</legend>
+                            <legend>{{ "Details"|translate }}</legend>
 
-                            <label for="title">Title</label>
-                            <input type="text" id="title" name="title"
-                                   value="{{ Maintenance.title_text }}" required>
+                            <label for="title">{{ "Title"|translate }}</label>
+                            <input type="text" id="title" name="title" value="{{ Maintenance.title_text }}" required>
 
-                            <label for="body">Description</label>
-                            <textarea id="body" name="body" rows="5"
-                                      class="fullwidth-text-input" required>{{ Maintenance.body_text }}</textarea>
+                            <label for="body">{{ "Description"|translate }}</label>
+                            <textarea id="body" name="body" rows="5" class="fullwidth-text-input" required>{{ Maintenance.body_text }}</textarea>
                         </fieldset>
 
                         <fieldset>
-                            <legend>Window (UTC)</legend>
+                            <legend>{{ "Window (UTC)"|translate }}</legend>
 
-                            <label for="starts_at">Starts at</label>
+                            <label for="starts_at">{{ "Starts at"|translate }}</label>
                             <input type="datetime-local" id="starts_at" name="starts_at"
                                    value="{{ StartsAtInput }}" required>
 
-                            <label for="ends_at">Ends at</label>
+                            <label for="ends_at">{{ "Ends at"|translate }}</label>
                             <input type="datetime-local" id="ends_at" name="ends_at"
                                    value="{{ EndsAtInput }}" required>
                         </fieldset>
 
                         <fieldset>
-                            <legend>Affected services</legend>
+                            <legend>{{ "Affected services"|translate }}</legend>
 
                             {% for key, prettyName in Services %}
                                 <div class="checkbox-holder">
@@ -104,39 +102,37 @@
                 </div>
 
                 <div class="right-preferential-box">
-                    <h2>Details</h2>
+                    <h2>{{ "Details"|translate }}</h2>
 
                     <div class="marked-section">
                         <dl>
-                            <dt>Window</dt>
-                            <dd>{{ Maintenance.starts_at_utc }} &rarr; {{ Maintenance.ends_at_utc }} UTC</dd>
+                            <dt>{{ "Window"|translate }}</dt>
+                            <dd>{{ Maintenance.starts_at_utc }} -> {{ Maintenance.ends_at_utc }} UTC</dd>
 
-                            <dt>Scheduled by</dt>
+                            <dt>{{ "Scheduled by"|translate }}</dt>
                             <dd>{{ Maintenance.created_by }}</dd>
 
-                            <dt>Created</dt>
+                            <dt>{{ "Created"|translate }}</dt>
                             <dd>{{ Maintenance.created_at_utc }} UTC</dd>
                         </dl>
                     </div>
 
-                    <h2>Progress notes</h2>
+                    <h2>{{ "Progress notes"|translate }}</h2>
 
                     <form method="post" action="/admin/maintenance/{{ Maintenance.id }}">
                         <input type="hidden" name="csrf_token" value="{{ CsrfToken }}">
                         <input type="hidden" name="action" value="post_update">
 
                         <fieldset>
-                            <legend>Post a note</legend>
+                            <legend>{{ "Post a note"|translate }}</legend>
 
-                            <label for="update_title">Title</label>
-                            <input type="text" id="update_title" name="update_title"
-                                   placeholder="e.g. Running 20 minutes over">
+                            <label for="update_title">{{ "Title"|translate }}</label>
+                            <input type="text" id="update_title" name="update_title" placeholder="{{ "e.g. Running 20 minutes over"|translate }}">
 
-                            <label for="update_body">Note</label>
-                            <textarea id="update_body" name="update_body" rows="3"
-                                      class="fullwidth-text-input"></textarea>
+                            <label for="update_body">{{ "Note"|translate }}</label>
+                            <textarea id="update_body" name="update_body" rows="3" class="fullwidth-text-input"></textarea>
 
-                            <input type="submit" value="Post note">
+                            <input type="submit" value="{{ "Post note"|translate }}">
                         </fieldset>
                     </form>
 

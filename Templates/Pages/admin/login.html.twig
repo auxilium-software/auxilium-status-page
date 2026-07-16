@@ -3,8 +3,8 @@
     <main>
         <div class="inner-content">
 
-            <h1>Sign in</h1>
-            <p class="muted">Administrative access to the status page.</p>
+            <h1>{{ "Sign in"|translate }}</h1>
+            <p class="muted">{{ "Administrative access to the status page."|translate }}</p>
 
             {% if ErrorMessage %}
                 <div class="error-toast" role="alert">
@@ -16,9 +16,9 @@
                 <input type="hidden" name="csrf_token" value="{{ CsrfToken }}">
 
                 <fieldset>
-                    <legend>Credentials</legend>
+                    <legend>{{ "Credentials"|translate }}</legend>
 
-                    <label for="username">Username</label>
+                    <label for="username">{{ "Username"|translate }}</label>
                     <input type="text"
                            id="username"
                            name="username"
@@ -28,14 +28,14 @@
                            required
                            autofocus>
 
-                    <label for="password">Password</label>
+                    <label for="password">{{ "Password"|translate }}</label>
                     <input type="password"
                            id="password"
                            name="password"
                            autocomplete="current-password"
                            required>
 
-                    <input type="submit" value="Sign in">
+                    <input type="submit" value="{{ "Sign in"|translate }}">
                 </fieldset>
             </form>
 

@@ -11,7 +11,7 @@
     <main>
         <div class="inner-content">
             <section class="overall-status-note overall-status-operational" id="overall" role="status" aria-live="polite">
-                <span class="note-heading" id="overall-text">Loading status...</span>
+                <span class="note-heading" id="overall-text">{{ "Loading status..."|translate }}</span>
                 <span class="overall-status-subheading" id="overall-sub"></span>
             </section>
 
@@ -19,31 +19,31 @@
                 <h2 id="h-monitors">Last {{ GetUserConfiguration("UserInterfaceSettings", "WindowInDays") }} days</h2>
                 <div id="monitors"></div>
                 <div class="uptime-legend" aria-hidden="true">
-                    <span><span class="uptime-legend-swatch uptime-day-up"></span>Operational</span>
-                    <span><span class="uptime-legend-swatch uptime-day-degraded"></span>Degraded</span>
-                    <span><span class="uptime-legend-swatch uptime-day-down"></span>Outage</span>
-                    <span><span class="uptime-legend-swatch uptime-day-nodata"></span>No data</span>
+                    <span><span class="uptime-legend-swatch uptime-day-up"></span>{{ "Operational"|translate }}</span>
+                    <span><span class="uptime-legend-swatch uptime-day-degraded"></span>{{ "Degraded"|translate }}</span>
+                    <span><span class="uptime-legend-swatch uptime-day-down"></span>{{ "Outage"|translate }}</span>
+                    <span><span class="uptime-legend-swatch uptime-day-nodata"></span>{{ "No data"|translate }}</span>
                 </div>
             </section>
 
             <div class="status-columns">
                 <div class="left-preferential-box" aria-labelledby="h-incidents">
-                    <h2 id="h-incidents">Past incidents</h2>
+                    <h2 id="h-incidents">{{ "Past incidents"|translate }}</h2>
                     <div id="incidents"></div>
                 </div>
 
                 <div class="right-preferential-box" aria-labelledby="h-maint">
-                    <h2 id="h-maint">Maintenance</h2>
-                    <h3 class="low-margin-heading" style="margin:0.6rem 0 0.5rem;">Scheduled</h3>
+                    <h2 id="h-maint">{{ "Maintenance"|translate }}</h2>
+                    <h3 class="low-margin-heading" style="margin:0.6rem 0 0.5rem;">{{ "Scheduled"|translate }}</h3>
                     <div id="maint-upcoming"></div>
-                    <h3 class="low-margin-heading" style="margin:1.4rem 0 0.5rem;">Past</h3>
+                    <h3 class="low-margin-heading" style="margin:1.4rem 0 0.5rem;">{{ "Past"|translate }}</h3>
                     <div id="maint-historical"></div>
                 </div>
             </div>
 
             <footer><div class="inner-content">
-                    This page refreshes automatically every 60 seconds. Times shown in
-                    <span id="tz-label">UTC</span>.
+                    This page refreshes automatically every 60 seconds.
+                    Times shown in <span id="tz-label">UTC</span>.
                 </div></footer>
         </div>
     </main>
