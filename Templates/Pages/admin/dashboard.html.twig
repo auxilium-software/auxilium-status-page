@@ -1,0 +1,200 @@
+{% extends '/Bases/StandardWebPage.html.twig' %}
+{% block content %}
+    <div id="portal-authenticated-user-bar">
+        <div class="inner-content">
+            <p>Signed in as <strong>{{ CurrentUser.displayName }}</strong></p>
+            <form method="post" action="/admin/logout" class="inline-logout-form">
+                <input type="hidden" name="csrf_token" value="{{ CsrfToken }}">
+                <input type="submit" value="Sign out" class="less-important-button">
+            </form>
+        </div>
+    </div>
+
+    <main>
+        <div class="inner-content">
+
+            <h1>Dashboard</h1>
+
+            {% if PollerIsStale %}
+                <div class="critical-note">
+                    <span class="note-heading">Poller is not running</span>
+                    <p>
+                        {% if LastCheckUtc %}
+                            The last service check was recorded at <strong>{{ LastCheckUtc }} UTC</strong>.
+                        {% else %}
+                            No service checks have ever been recorded.
+                        {% endif %}
+                        Service states below are stale and cannot be relied upon.
+                    </p>
+                </div>
+            {% endif %}
+
+            <h2>Services</h2>
+
+            {% for service in ServiceStates %}
+                <div class="status-box {% if service.status == 'down' %}status-box-negative{% elseif service.status == 'degraded' %}status-box-neutral{% endif %}">
+                    <h4 class="status-box-header">
+                        {{ service.prettyName }}
+                        <span class="status-box-header-spacer"></span>
+                        <span class="tag-badge-small {% if service.status == 'up' %}positive-badge{% elseif service.status == 'down' %}negative-badge{% else %}neutral-badge{% endif %}">
+                        {% if service.status == 'up' %}
+                            Operational
+                        {% elseif service.status == 'degraded' %}
+                            Degraded
+                        {% elseif service.status == 'down' %}
+                            Outage
+                        {% else %}
+                            No data
+                        {% endif %}
+                    </span>
+                    </h4>
+                    <div class="status-box-body">
+                        <dl>
+                            <dt>Last checked</dt>
+                            <dd>
+                                {% if service.checkedAtUtc %}
+                                    {{ service.checkedAtUtc }} UTC
+                                    {% if service.isStale %}
+                                        <span class="tag-badge-small negative-badge">Stale</span>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="no-data-badge">Never</span>
+                                {% endif %}
+                            </dd>
+
+                            <dt>Response time</dt>
+                            <dd>
+                                {% if service.responseMs is not null %}
+                                    {{ service.responseMs }} ms
+                                {% else %}
+                                    <span class="no-data-badge">No data</span>
+                                {% endif %}
+                            </dd>
+
+                            <dt>Status code</dt>
+                            <dd>
+                                {% if service.statusCode %}
+                                    {{ service.statusCode }}
+                                {% else %}
+                                    <span class="no-data-badge">Unreachable</span>
+                                {% endif %}
+                            </dd>
+
+                            {% if service.errorMessage %}
+                                <dt>Error</dt>
+                                <dd class="error-text">{{ service.errorMessage }}</dd>
+                            {% endif %}
+                        </dl>
+                    </div>
+                </div>
+            {% endfor %}
+
+            <div class="status-columns">
+                <div class="left-preferential-box">
+                    <h2>Incidents</h2>
+
+                    <div class="button-box">
+                        <a href="/admin/incidents/create" class="button">Declare incident</a>
+                    </div>
+
+                    <h3>Ongoing</h3>
+
+                    {% if OngoingIncidents is empty %}
+                        <p class="no-data-badge">No ongoing incidents.</p>
+                    {% else %}
+                        {% for incident in OngoingIncidents %}
+                            <div class="status-box {% if incident.impact in ['major', 'critical'] %}status-box-negative{% else %}status-box-neutral{% endif %}">
+                                <h4 class="status-box-header">
+                                    {{ incident.title_text }}
+                                    <span class="status-box-header-spacer"></span>
+                                    <span class="tag-badge-small neutral-badge">{{ incident.status }}</span>
+                                </h4>
+                                <div class="status-box-body">
+                                    <p class="status-meta-line">
+                                        {{ incident.impact|capitalize }} impact
+                                        -
+                                        started {{ incident.started_at_utc }} UTC
+                                        -
+                                        {{ incident.update_count }} update{{ incident.update_count == 1 ? '' : 's' }}
+                                    </p>
+                                    {% if incident.affected_keys %}
+                                        <p class="status-affected-line">Affected: {{ incident.affected_keys }}</p>
+                                    {% endif %}
+                                    <a href="/admin/incidents/{{ incident.id }}" class="navigational-link">Post update</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <h3>Recently resolved</h3>
+
+                    {% if ResolvedIncidents is empty %}
+                        <p class="no-data-badge">No resolved incidents.</p>
+                    {% else %}
+                        <ul class="collection-list">
+                            {% for incident in ResolvedIncidents %}
+                                <li>
+                                    <a href="/admin/incidents/{{ incident.id }}" class="navigational-link">
+                                        {{ incident.title_text }}
+                                    </a>
+                                    <span class="file-meta-info">
+                                    Resolved {{ incident.resolved_at_utc }} UTC
+                                </span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+
+                <div class="right-preferential-box">
+                    <h2>Maintenance</h2>
+
+                    <div class="button-box">
+                        <a href="/admin/maintenance/create" class="button">Schedule maintenance</a>
+                    </div>
+
+                    <h3>Scheduled & in progress</h3>
+
+                    {% if ActiveMaintenance is empty %}
+                        <p class="no-data-badge">No maintenance scheduled.</p>
+                    {% else %}
+                        {% for window in ActiveMaintenance %}
+                            <div class="status-box status-box-brand">
+                                <h4 class="status-box-header">
+                                    {{ window.title_text }}
+                                    <span class="status-box-header-spacer"></span>
+                                    <span class="tag-badge-small {% if window.status == 'in_progress' %}neutral-badge{% endif %}">
+                                    {{ window.status|replace({'_': ' '}) }}
+                                </span>
+                                </h4>
+                                <div class="status-box-body">
+                                    <p class="status-meta-line">
+                                        {{ window.starts_at_utc }} -> {{ window.ends_at_utc }} UTC
+                                    </p>
+                                    {% if window.affected_keys %}
+                                        <p class="status-affected-line">Affects: {{ window.affected_keys }}</p>
+                                    {% endif %}
+                                    <a href="/admin/maintenance/{{ window.id }}" class="navigational-link">Edit</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <h2>System</h2>
+            <div class="marked-section">
+                <dl>
+                    <dt>Last check</dt>
+                    <dd>{{ LastCheckUtc ? LastCheckUtc ~ ' UTC' : 'Never' }}</dd>
+
+                    <dt>Checks recorded</dt>
+                    <dd>{{ CheckCount }}</dd>
+                </dl>
+            </div>
+
+        </div>
+    </main>
+
+{% endblock %}
