@@ -128,7 +128,7 @@ if ($incidentIds !== []) {
     [$clause, $params] = $inClause($incidentIds);
 
     $updateRows = $db->query_read(
-        "SELECT incident_id, status, title_text, body_html, created_at_utc
+        "SELECT incident_id, status, title_text, body_text, created_at_utc
                 FROM incident_updates
                 WHERE incident_id IN ($clause)
                 ORDER BY created_at_utc DESC, id DESC;",
@@ -140,7 +140,7 @@ if ($incidentIds !== []) {
             'postedAt' => $toIso($update['created_at_utc']),
             'status' => $update['status'],
             'title' => $update['title_text'],
-            'body' => $update['body_html'],
+            'body' => $update['body_text'],
         ];
     }
 
@@ -173,14 +173,14 @@ foreach ($incidentRows as $row) {
 }
 
 $upcomingRows = $db->query_read(
-    "SELECT id, title_text, body_html, status, starts_at_utc, ends_at_utc
+    "SELECT id, title_text, body_text, status, starts_at_utc, ends_at_utc
             FROM maintenance
             WHERE status IN ('scheduled', 'in_progress')
             ORDER BY starts_at_utc;"
 );
 
 $historicalRows = $db->query_read(
-    "SELECT id, title_text, body_html, status, starts_at_utc, ends_at_utc
+    "SELECT id, title_text, body_text, status, starts_at_utc, ends_at_utc
             FROM maintenance
             WHERE status = 'completed' AND ends_at_utc >= :since
             ORDER BY ends_at_utc DESC",
@@ -217,7 +217,7 @@ $buildMaintenance = static function (array $row) use ($toIso, $affectedByMainten
     return [
         'id' => $id,
         'title' => $row['title_text'],
-        'body' => $row['body_html'],
+        'body' => $row['body_text'],
         'status' => $row['status'],
         'startsAt' => $toIso($row['starts_at_utc']),
         'endsAt' => $toIso($row['ends_at_utc']),

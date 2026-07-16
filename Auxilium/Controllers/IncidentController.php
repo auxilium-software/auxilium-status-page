@@ -50,7 +50,7 @@ final class IncidentController
             ): int
             {
                 $incidentId = $db->query_insert(
-                    "INSERT INTO incidents (created_at_utc, created_by_user_id, title_text, body_html, impact, status, started_at_utc, resolved_at_utc)
+                    "INSERT INTO incidents (created_at_utc, created_by_user_id, title_text, body_text, impact, status, started_at_utc, resolved_at_utc)
                             VALUES (:created_at, :user_id, :title, :body, :impact, :status, :started_at, :resolved_at);",
                     [
                         ':created_at'  => $now,
@@ -82,7 +82,7 @@ final class IncidentController
                 // public timeline reads as a complete narrative from the start.
                 $db->query_insert(
                     "INSERT INTO incident_updates
-                        (created_at_utc, created_by_user_id, incident_id, status, title_text, body_html)
+                        (created_at_utc, created_by_user_id, incident_id, status, title_text, body_text)
                      VALUES (:created_at, :user_id, :incident_id, :status, :title, :body);",
                     [
                         ':created_at'  => $now,
@@ -115,7 +115,7 @@ final class IncidentController
             function (SQLiteInteractions $db) use ($userId, $incidentId, $status, $title, $bodyHtml, $now): int
             {
                 $updateId = $db->query_insert(
-                    "INSERT INTO incident_updates (created_at_utc, created_by_user_id, incident_id, status, title_text, body_html)
+                    "INSERT INTO incident_updates (created_at_utc, created_by_user_id, incident_id, status, title_text, body_text)
                             VALUES (:created_at, :user_id, :incident_id, :status, :title, :body);",
                     [
                         ':created_at'  => $now,

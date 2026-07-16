@@ -42,7 +42,7 @@ final class MaintenanceController
             ): int
             {
                 $maintenanceId = $db->query_insert(
-                    "INSERT INTO maintenance (created_at_utc, created_by_user_id, title_text, body_html, status, starts_at_utc, ends_at_utc)
+                    "INSERT INTO maintenance (created_at_utc, created_by_user_id, title_text, body_text, status, starts_at_utc, ends_at_utc)
                             VALUES (:created_at, :user_id, :title, :body, :status, :starts_at, :ends_at);",
                     [
                         ':created_at' => $now,
@@ -72,7 +72,7 @@ final class MaintenanceController
     {
         $this->db->query_update(
             "UPDATE maintenance
-                    SET title_text  = :title, body_html = :body, starts_at_utc = :starts_at, ends_at_utc   = :ends_at
+                    SET title_text  = :title, body_text = :body, starts_at_utc = :starts_at, ends_at_utc   = :ends_at
                     WHERE id = :id;",
             [
                 ':title'     => $title,
@@ -159,7 +159,7 @@ final class MaintenanceController
     {
         return $this->db->query_insert(
             "INSERT INTO maintenance_updates
-                    (created_at_utc, created_by_user_id, maintenance_id, title_text, body_html)
+                    (created_at_utc, created_by_user_id, maintenance_id, title_text, body_text)
                     VALUES (:created_at, :user_id, :maintenance_id, :title, :body);",
             [
                 ':created_at'     => self::NowUtc(),
