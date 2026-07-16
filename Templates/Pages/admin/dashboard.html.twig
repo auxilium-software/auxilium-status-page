@@ -1,5 +1,6 @@
 {% extends '/Bases/StandardWebPage.html.twig' %}
 {% block content %}
+
     <div id="portal-authenticated-user-bar">
         <div class="inner-content">
             <p>Signed in as <strong>{{ CurrentUser.displayName }}</strong></p>
@@ -115,10 +116,8 @@
                                 </h4>
                                 <div class="status-box-body">
                                     <p class="status-meta-line">
-                                        {{ incident.impact|capitalize }} impact
-                                        -
-                                        started {{ incident.started_at_utc }} UTC
-                                        -
+                                        {{ incident.impact|capitalize }} impact &middot;
+                                        started {{ incident.started_at_utc }} UTC &middot;
                                         {{ incident.update_count }} update{{ incident.update_count == 1 ? '' : 's' }}
                                     </p>
                                     {% if incident.affected_keys %}
@@ -183,22 +182,38 @@
                             </div>
                         {% endfor %}
                     {% endif %}
+
+                    <h3>Recently completed</h3>
+
+                    {% if PastMaintenance is empty %}
+                        <p class="no-data-badge">No past maintenance.</p>
+                    {% else %}
+                        <ul class="collection-list">
+                            {% for window in PastMaintenance %}
+                                <li>
+                                    <a href="/admin/maintenance/{{ window.id }}" class="navigational-link">
+                                        {{ window.title_text }}
+                                    </a>
+                                    <span class="file-meta-info">
+                                    {{ window.status|capitalize }} &middot; ended {{ window.ends_at_utc }} UTC
+                                </span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
                 </div>
 
+                <h2>System</h2>
+                <div class="marked-section">
+                    <dl>
+                        <dt>Last check</dt>
+                        <dd>{{ LastCheckUtc ? LastCheckUtc ~ ' UTC' : 'Never' }}</dd>
+
+                        <dt>Checks recorded</dt>
+                        <dd>{{ CheckCount }}</dd>
+                    </dl>
+                </div>
             </div>
-
-            <h2>System</h2>
-            <div class="marked-section">
-                <dl>
-                    <dt>Last check</dt>
-                    <dd>{{ LastCheckUtc ? LastCheckUtc ~ ' UTC' : 'Never' }}</dd>
-
-                    <dt>Checks recorded</dt>
-                    <dd>{{ CheckCount }}</dd>
-                </dl>
-            </div>
-
         </div>
     </main>
-
 {% endblock %}
