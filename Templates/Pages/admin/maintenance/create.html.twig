@@ -1,0 +1,92 @@
+{% extends '/Bases/StandardWebPage.html.twig' %}
+{% block content %}
+
+    <main>
+        <div class="inner-content">
+
+            <div class="navigation-breadcrumb-container">
+                <a href="/" class="navigation-breadcrumb"><span>Status Page</span></a>
+                <a href="/admin" class="navigation-breadcrumb"><span>Admin Dashboard</span></a>
+                <span class="navigation-breadcrumb"><span>Schedule Maintenance</span></span>
+            </div>
+
+            <h1>Schedule maintenance</h1>
+
+            {% if Errors is not empty %}
+                <div class="error-toast" role="alert">
+                    {% for error in Errors %}
+                        <p class="no-lower-margin">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="post" action="/admin/maintenance/create">
+                <input type="hidden" name="csrf_token" value="{{ CsrfToken }}">
+
+                <fieldset>
+                    <legend>What is planned?</legend>
+
+                    <label for="title">Title</label>
+                    <input type="text"
+                           id="title"
+                           name="title"
+                           value="{{ Submitted.title }}"
+                           placeholder="e.g. Database storage migration"
+                           required
+                           autofocus>
+
+                    <label for="body">Description</label>
+                    <textarea id="body"
+                              name="body"
+                              rows="5"
+                              class="fullwidth-text-input"
+                              placeholder="What is happening, and what impact users should expect."
+                              required>{{ Submitted.body }}</textarea>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Window (UTC)</legend>
+
+                    <label for="starts_at">Starts at</label>
+                    <input type="datetime-local"
+                           id="starts_at"
+                           name="starts_at"
+                           value="{{ Submitted.startsAt }}"
+                           required>
+
+                    <label for="ends_at">Ends at</label>
+                    <input type="datetime-local"
+                           id="ends_at"
+                           name="ends_at"
+                           value="{{ Submitted.endsAt }}"
+                           required>
+                    <p class="file-meta-info">
+                        Times are entered and stored in UTC.
+                    </p>
+                </fieldset>
+
+                <fieldset>
+                    <legend>Affected services</legend>
+
+                    {% for key, prettyName in Services %}
+                        <div class="checkbox-holder">
+                            <input type="checkbox"
+                                   id="affected_{{ key }}"
+                                   name="affected[]"
+                                   value="{{ key }}"
+                                    {{ key in Submitted.affected ? 'checked' : '' }}>
+                            <label for="affected_{{ key }}"><p>{{ prettyName }}</p></label>
+                        </div>
+                    {% endfor %}
+                </fieldset>
+
+                <div class="button-box">
+                    <input type="submit" value="Schedule maintenance">
+                    <a href="/admin" class="button less-important-button">Cancel</a>
+                </div>
+            </form>
+
+        </div>
+    </main>
+
+{% endblock %}
