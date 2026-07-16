@@ -1,0 +1,141 @@
+{% extends '/Bases/StandardWebPage.html.twig' %}
+{% block content %}
+    <main>
+        <div class="inner-content">
+
+            <div class="navigation-breadcrumb-container">
+                <a href="/admin" class="navigation-breadcrumb"><span>Dashboard</span></a>
+                <span class="navigation-breadcrumb"><span>{{ Incident.title_text }}</span></span>
+            </div>
+
+            <div class="editable-title">
+                <h1>
+                    {{ Incident.title_text }}
+                    <span class="tag-badge-inline {% if Incident.resolved_at_utc %}positive-badge{% else %}neutral-badge{% endif %}">
+                    {{ Incident.status|capitalize }}
+                </span>
+                </h1>
+            </div>
+
+            {% if Errors is not empty %}
+                <div class="error-toast" role="alert">
+                    {% for error in Errors %}
+                        <p class="no-lower-margin">{{ error }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {% if not Incident.resolved_at_utc %}
+                <div class="warning-note">
+                    <strong>This incident is ongoing.</strong>
+                    Post an update with the status set to <em>Resolved</em> to close it.
+                </div>
+            {% endif %}
+
+            <div class="status-columns">
+                <div class="left-preferential-box">
+
+                    <h2>Post an update</h2>
+
+                    <form method="post" action="/admin/incidents/{{ Incident.id }}">
+                        <input type="hidden" name="csrf_token" value="{{ CsrfToken }}">
+
+                        <fieldset>
+                            <legend>New update</legend>
+
+                            <label for="status">Status</label>
+                            <select id="status" name="status">
+                                {% for status in Statuses %}
+                                    <option value="{{ status }}" {{ Submitted.status == status ? 'selected' : '' }}>
+                                        {{ status|capitalize }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                            <p class="file-meta-info">
+                                Selecting <strong>Resolved</strong> closes the incident.
+                            </p>
+
+                            <label for="title">Title</label>
+                            <input type="text"
+                                   id="title"
+                                   name="title"
+                                   value="{{ Submitted.title }}"
+                                   placeholder="e.g. Root cause identified"
+                                   required>
+
+                            <label for="body">Update</label>
+                            <textarea id="body"
+                                      name="body"
+                                      rows="4"
+                                      class="fullwidth-text-input"
+                                      placeholder="What has changed since the last update."
+                                      required>{{ Submitted.body }}</textarea>
+
+                            <input type="submit" value="Post update">
+                        </fieldset>
+                    </form>
+
+                    <h2>Update history</h2>
+
+                    <ul class="timeline-list">
+                        {% for update in Updates %}
+                            <li class="timeline-entry">
+                                <span class="timeline-entry-time">{{ update.created_at_utc }} UTC</span>
+                                <span class="timeline-entry-title">{{ update.title_text }}</span>
+                                <span class="timeline-entry-meta">{{ update.status }} - {{ update.created_by }}</span>
+                                <p class="timeline-entry-description">{{ update.body_html }}</p>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="right-preferential-box">
+
+                    <h2>Details</h2>
+
+                    <div class="marked-section">
+                        <dl>
+                            <dt>Impact</dt>
+                            <dd>
+                            <span class="tag-badge-inline-large {% if Incident.impact in ['major', 'critical'] %}negative-badge{% elseif Incident.impact == 'minor' %}neutral-badge{% endif %}">
+                                {{ Incident.impact|capitalize }}
+                            </span>
+                            </dd>
+
+                            <dt>Started</dt>
+                            <dd>{{ Incident.started_at_utc }} UTC</dd>
+
+                            <dt>Resolved</dt>
+                            <dd>
+                                {% if Incident.resolved_at_utc %}
+                                    {{ Incident.resolved_at_utc }} UTC
+                                {% else %}
+                                    <span class="no-data-badge">Ongoing</span>
+                                {% endif %}
+                            </dd>
+
+                            <dt>Declared by</dt>
+                            <dd>{{ Incident.created_by }}</dd>
+
+                            <dt>Declared at</dt>
+                            <dd>{{ Incident.created_at_utc }} UTC</dd>
+                        </dl>
+                    </div>
+
+                    <h2>Affected services</h2>
+
+                    <div class="marked-section">
+                        {% if AffectedKeys is empty %}
+                            <p class="no-data-badge">None tagged.</p>
+                        {% else %}
+                            {% for key in AffectedKeys %}
+                                <span class="removeable-badge">{{ Services[key] ?? key }}</span>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+{% endblock %}
+
