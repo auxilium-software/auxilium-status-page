@@ -56,7 +56,7 @@ services:
     configs:
       - source: aux-status-config
         target: /etc/aux-status/config.docker.yaml
-    command: ["php", "CronJobs/PollerLoop.php"]
+    command: ["php", "CronJobs/Poller.php"]
     restart: unless-stopped
 
 configs:
