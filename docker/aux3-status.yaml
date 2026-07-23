@@ -1,0 +1,32 @@
+
+SQLite:
+  DatabaseFilePath: /var/lib/aux-status/auxilium-status.db
+
+HealthUrls:
+  Portal: null # <-- CHANGE ME
+  API: null # <-- CHANGE ME
+
+UserInterfaceSettings:
+  DegradedResponseMsThreshold: 2000
+  WindowInDays: 100
+  RefreshIntervalInMilliseconds: 10000 # a lower value will end up DDOS'ing your server
+
+
+# the following should be set to the same as your production instance
+SystemSettings:
+  InstanceName: null # <-- CHANGE ME
+  LogoPath: null # <-- CHANGE ME
+  LogoContrastPath: null # <-- CHANGE ME
+  PrivacyPolicyUrl: null
+  AccessibilityStatementUrl: null
+  ContactUsUrl: null
+  AboutPageUrl: null
+
+
+
+####################################################################################################
+# Development Configuration
+Development:
+  # warning warning warning warning warning
+  PHPAcceptSelfSignedCertificatesForAPI: false # pls never set this to true
+  # warning warning warning warning warning
