@@ -1,0 +1,67 @@
+@import url("/Static/CSS/Icons/DarkMode.css");
+
+:root {
+    --background-color: #121212;
+    --foreground-color: #dbdbdb;
+    --foreground-color-headings: #f2f2f2;
+    --foreground-color-outlines: #dbdbdb;
+    --error-color: #cc2200;
+    --error-color-contrast: #ffffff;
+
+    --outline-width: 0.15rem;
+
+    --form-max-width-small: 128mm;
+    --form-max-width-small-fieldset: 122mm;
+    /* --form-max-width-small-fieldset: 116mm; */
+
+    --padding-level-one: 5mm;
+    --button-padding: 3mm;
+
+    font-size: 5mm;
+}
+
+select {
+    background: url("/Static/Icons/arrow_drop_down_white_48dp.svg") no-repeat right var(--background-color);
+}
+
+
+.homepage-top-fold-image {
+    filter: contrast(50%) brightness(30%); !important;
+}
+
+.navigational-link::after {
+    background-image: url("/Static/Icons/internal_link_marker_white_48dp.svg");
+}
+
+.navigational-link-new-tab::after {
+    background-image: url("/Static/Icons/open_white_48dp.svg");
+}
+
+.action-link-delete::after {
+    background-image: url("/Static/Icons/delete_white_48dp.svg");
+}
+
+.action-link-search::after {
+    background-image: url("/Static/Icons/search_white_48dp.svg");
+}
+
+.action-link-close::after {
+    background-image: url("/Static/Icons/close_white_48dp.svg");
+}
+
+@media only screen and (max-width: 180mm) {
+    .marked-section {
+        padding: 0.1rem 0 0.1rem 0.7rem;
+        margin: 0 0 2.2rem -1rem;
+        width: 100%;
+        box-sizing: content-box;
+        border-width: 0.3rem;
+        border-style: none none none solid;
+        border-color: var(--foreground-color);
+        overflow: visible;
+    }
+}
+
+input[type=checkbox]:checked, input[type=checkbox].slider:checked, input[type=radio]:checked, .fake-checkbox-true  {
+    border-color: var(--foreground-color-outlines);
+}
