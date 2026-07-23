@@ -35,7 +35,7 @@ services:
       - php
     volumes:
       # Nginx only needs the public directory.
-      - ./public:/var/www/html/public:ro
+      - ./Public:/var/www/html/Public:ro
 
       # Custom virtual-host configuration.
       - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf:ro
