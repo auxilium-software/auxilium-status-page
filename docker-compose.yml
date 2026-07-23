@@ -1,0 +1,55 @@
+
+services:
+
+  ##### migration runner (run once)
+  migrate:
+    build: .
+    command: ["php", "CLI/Migrate.php"]
+    volumes:
+      - status-data:/var/lib/aux-status
+    environment:
+      CONFIG: /etc/aux-status/aux3-status.yaml
+    configs:
+      - source: aux-status-config
+        target: /etc/aux-status/aux3-status.yaml
+    restart: "no"
+
+  ##### public stuff
+  web:
+    build: .
+    depends_on:
+      migrate:
+        condition: service_completed_successfully   # gate on a clean migration
+    volumes:
+      - status-data:/var/lib/aux-status
+    environment:
+      CONFIG: /etc/aux-status/aux3-status.yaml
+    configs:
+      - source: aux-status-config
+        target: /etc/aux-status/aux3-status.yaml
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+
+  ##### poller
+  poller:
+    build: .
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    volumes:
+      - status-data:/var/lib/aux-status
+    environment:
+      CONFIG: /etc/aux-status/aux3-status.yaml
+    configs:
+      - source: aux-status-config
+        target: /etc/aux-status/aux3-status.yaml
+    command: ["php", "CronJobs/PollerLoop.php"]
+    restart: unless-stopped
+
+configs:
+  aux-status-config:
+    file: ./deploy/aux3-status.yaml
+
+volumes:
+  status-data:
