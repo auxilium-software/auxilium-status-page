@@ -7,10 +7,10 @@ services:
     volumes:
       - status-data:/var/lib/aux-status
     environment:
-      CONFIG: /etc/aux-status/aux3-status.yaml
+      CONFIG: /etc/aux-status/config.docker.yaml
     configs:
       - source: aux-status-config
-        target: /etc/aux-status/aux3-status.yaml
+        target: /etc/aux-status/config.docker.yaml
     restart: "no"
 
   ##### php
@@ -22,10 +22,10 @@ services:
     volumes:
       - status-data:/var/lib/aux-status
     environment:
-      CONFIG: /etc/aux-status/aux3-status.yaml
+      CONFIG: /etc/aux-status/config.docker.yaml
     configs:
       - source: aux-status-config
-        target: /etc/aux-status/aux3-status.yaml
+        target: /etc/aux-status/config.docker.yaml
     restart: unless-stopped
 
   ##### public stuff
@@ -52,16 +52,16 @@ services:
     volumes:
       - status-data:/var/lib/aux-status
     environment:
-      CONFIG: /etc/aux-status/aux3-status.yaml
+      CONFIG: /etc/aux-status/config.docker.yaml
     configs:
       - source: aux-status-config
-        target: /etc/aux-status/aux3-status.yaml
+        target: /etc/aux-status/config.docker.yaml
     command: ["php", "CronJobs/PollerLoop.php"]
     restart: unless-stopped
 
 configs:
   aux-status-config:
-    file: ./docker/aux3-status.yaml
+    file: ./docker/config.docker.yaml
 
 volumes:
   status-data:
