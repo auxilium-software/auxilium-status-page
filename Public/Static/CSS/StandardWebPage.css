@@ -4,20 +4,20 @@
 @import url("/Static/CSS/Branding/Core.css");
 @import url("/Static/CSS/Icons/LightMode.css");
 
-@import url("/Static/CSS/Element2/Badges.css");
-@import url("/Static/CSS/Element2/Bulletins.css");
-@import url("/Static/CSS/Element2/DescriptionLists.css");
-@import url("/Static/CSS/Element2/Inputs.css");
-@import url("/Static/CSS/Element2/LikertGrid.css");
-@import url("/Static/CSS/Element2/LinkList.css");
-@import url("/Static/CSS/Element2/Loading.css");
-@import url("/Static/CSS/Element2/MarkedSection.css");
-@import url("/Static/CSS/Element2/Messages.css");
-@import url("/Static/CSS/Element2/Navigation.css");
-@import url("/Static/CSS/Element2/Notes.css");
-@import url("/Static/CSS/Element2/Timeline.css");
-@import url("/Static/CSS/Element2/ToastNotification.css");
-@import url("/Static/CSS/Element2/ToDos.css");
+@import url("/Static/CSS/Elements/Badges.css");
+@import url("/Static/CSS/Elements/Bulletins.css");
+@import url("/Static/CSS/Elements/DescriptionLists.css");
+@import url("/Static/CSS/Elements/Inputs.css");
+@import url("/Static/CSS/Elements/LikertGrid.css");
+@import url("/Static/CSS/Elements/LinkList.css");
+@import url("/Static/CSS/Elements/Loading.css");
+@import url("/Static/CSS/Elements/MarkedSection.css");
+@import url("/Static/CSS/Elements/Messages.css");
+@import url("/Static/CSS/Elements/Navigation.css");
+@import url("/Static/CSS/Elements/Notes.css");
+@import url("/Static/CSS/Elements/Timeline.css");
+@import url("/Static/CSS/Elements/ToastNotification.css");
+@import url("/Static/CSS/Elements/ToDos.css");
 
 @import url("/Static/CSS/Unorganised/status-page.css");
 
