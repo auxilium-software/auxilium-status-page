@@ -1,4 +1,3 @@
-BEGIN TRANSACTION;
 DROP TABLE IF EXISTS "admin_users";
 CREATE TABLE "admin_users" (
 	"id"	INTEGER,
@@ -121,4 +120,3 @@ CREATE INDEX "ix_service_checks_key_time" ON "service_checks" (
 	"service_key",
 	"checked_at_utc"
 );
-COMMIT;
