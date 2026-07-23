@@ -1,0 +1,53 @@
+
+dl {
+    display: inline-block;
+    margin: 0 0 1rem 0;
+    width: 100%;
+    position: relative;
+}
+dt {
+    font-weight: normal;
+    margin: 0 0 0 0;
+}
+dd {
+    font-weight: normal;
+    margin: 0 0 1em 0;
+}
+dt:last-of-type {
+    margin-bottom: 0;
+}
+dd:last-of-type {
+    margin-bottom: 0;
+}
+
+dt {
+    margin-top: 0.5em;
+    margin-bottom: 0.25em;
+}
+dd {
+    margin-top: 0em;
+    margin-bottom: 1em;
+    margin-left: 1em;
+}
+
+@media only screen and (min-width: 200mm) {
+    dt {
+        display: inline-block;
+        vertical-align: text-top;
+        width: 10rem;
+        margin-top: 0;
+        margin-bottom: 0.5em;
+    }
+    dd {
+        display: inline-block;
+        width: 100%;
+        vertical-align: text-top;
+        padding-left: 5mm;
+        padding-right: 11rem;
+        box-sizing: border-box;
+        margin-top: 0;
+        margin-left: 0;
+        margin-bottom: 0.5em;
+        margin-right: -11rem;
+    }
+}
