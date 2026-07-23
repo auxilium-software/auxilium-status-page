@@ -112,6 +112,21 @@ final class MigrationRunner
 
 
 
+    private function ValidateMigrationSql(string $sql, string $path): void
+    {
+        $withoutComments = preg_replace('/--[^\n]*/', '', $sql) ?? $sql;
+        $withoutComments = preg_replace('#/\*.*?\*/#s', '', $withoutComments) ?? $withoutComments;
+
+        if (preg_match(
+            '/(?:^|;)\s*(BEGIN(?:\s+TRANSACTION)?|COMMIT|ROLLBACK|END(?:\s+TRANSACTION)?)\s*;/i',
+            $withoutComments,
+            $matches
+        )) {
+            throw new RuntimeException(
+                "Migration '" . basename($path) . "' contains transaction control ('{$matches[1]}').  Transactions are managed by MigrationRunner."
+            );
+        }
+    }
 
     private function ApplyOne(int $version, string $path): void
     {
