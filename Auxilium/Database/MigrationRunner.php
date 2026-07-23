@@ -122,18 +122,20 @@ final class MigrationRunner
             throw new RuntimeException("Could not read migration file: $path");
         }
 
-        $this->pdo->exec('PRAGMA foreign_keys = OFF');
+        $this->ValidateMigrationSql($sql, $path);
 
-        $this->pdo->exec('BEGIN');
+        $this->pdo->exec('PRAGMA foreign_keys = OFF');
 
         try
         {
+            $this->pdo->beginTransaction();
+
             foreach ($this->SplitStatements($sql) as $statement)
             {
                 $this->pdo->exec($statement);
             }
 
-            $check      = $this->pdo->query('PRAGMA foreign_key_check');
+            $check = $this->pdo->query('PRAGMA foreign_key_check');
             $violations = $check->fetchAll();
             $check->closeCursor();
 
@@ -147,30 +149,47 @@ final class MigrationRunner
             $this->pdo->exec("PRAGMA user_version = $version");
 
             $stmt = $this->pdo->prepare(
-                "INSERT INTO _schema_migrations (version, name, applied_at_utc)
-                 VALUES (:version, :name, :applied_at)"
+                'INSERT INTO _schema_migrations
+                (version, name, applied_at_utc)
+             VALUES
+                (:version, :name, :applied_at)'
             );
+
             $stmt->execute([
                 ':version'    => $version,
                 ':name'       => basename($path),
-                ':applied_at' => (new DateTimeImmutable('now', new DateTimeZone('UTC')))->format('Y-m-d H:i:s'),
+                ':applied_at' => (new DateTimeImmutable(
+                    'now',
+                    new DateTimeZone('UTC')
+                ))->format('Y-m-d H:i:s'),
             ]);
 
-            $this->pdo->exec('COMMIT');
+            $this->pdo->commit();
         }
         catch (Throwable $e)
         {
-            try { $this->pdo->exec('ROLLBACK'); } catch (Throwable) {}
-
-            $this->pdo->exec('PRAGMA foreign_keys = ON');
+            if ($this->pdo->inTransaction())
+            {
+                try
+                {
+                    $this->pdo->rollBack();
+                }
+                catch (Throwable)
+                {
+                    // Preserve the original migration error.
+                }
+            }
 
             throw new RuntimeException(
-                "Migration '" . basename($path) . "' failed and was rolled back: {$e->getMessage()}",
+                "Migration '" . basename($path)
+                . "' failed and was rolled back: {$e->getMessage()}",
                 previous: $e
             );
         }
-
-        $this->pdo->exec('PRAGMA foreign_keys = ON');
+        finally
+        {
+            $this->pdo->exec('PRAGMA foreign_keys = ON');
+        }
     }
 
     private function DiscoverMigrations(): array
